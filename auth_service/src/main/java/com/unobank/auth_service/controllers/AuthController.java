@@ -28,9 +28,10 @@ public class AuthController {
         return repo.save(user);
     }
 
-    @GetMapping
-    public Flux<User> getUsers() {
-        return repo.findAll();
+    @GetMapping("/{id}")
+    public Mono<User> getUser(@PathVariable String id) {
+        System.out.println("id -- " + id);
+        return repo.findById(id);
     }
 
     @PutMapping("/auth_user")
