@@ -1,0 +1,17 @@
+2022-07-20 23:24:33.313  INFO 945193 --- [restartedMain] c.u.auth_service.AuthServiceApplication  : Starting AuthServiceApplication using Java 11.0.15 on EPUALVIW07D6 with PID 945193 (/home/denys_herasymuk/UCU/Studying_abroad/NYU_Java/Course_Project/NYU_Java_Course_Project/auth_service/target/classes started by denys_herasymuk in /home/denys_herasymuk/UCU/Studying_abroad/NYU_Java/Course_Project/NYU_Java_Course_Project/auth_service)
+2022-07-20 23:24:33.314  INFO 945193 --- [restartedMain] c.u.auth_service.AuthServiceApplication  : No active profile set, falling back to 1 default profile: "default"
+2022-07-20 23:24:33.358  INFO 945193 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2022-07-20 23:24:33.358  INFO 945193 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2022-07-20 23:24:34.158  INFO 945193 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8001 (http)
+2022-07-20 23:24:34.163  INFO 945193 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2022-07-20 23:24:34.164  INFO 945193 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.64]
+2022-07-20 23:24:34.192  INFO 945193 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2022-07-20 23:24:34.193  INFO 945193 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 834 ms
+2022-07-20 23:24:34.550  INFO 945193 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2022-07-20 23:24:34.554  INFO 945193 --- [restartedMain] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint(s) beneath base path '/actuator'
+2022-07-20 23:24:34.580  INFO 945193 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8001 (http) with context path ''
+2022-07-20 23:24:34.595  INFO 945193 --- [restartedMain] c.u.auth_service.AuthServiceApplication  : Started AuthServiceApplication in 1.626 seconds (JVM running for 2.043)
+2022-07-20 23:24:34.827  INFO 945193 --- [RMI TCP Connection(3)-127.0.0.1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2022-07-20 23:24:34.827  INFO 945193 --- [RMI TCP Connection(3)-127.0.0.1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2022-07-20 23:24:34.829  INFO 945193 --- [RMI TCP Connection(3)-127.0.0.1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2022-07-20 23:24:38.830  INFO 945193 --- [http-nio-8001-exec-2] c.u.a.controllers.AuthController         : Saved user #1
