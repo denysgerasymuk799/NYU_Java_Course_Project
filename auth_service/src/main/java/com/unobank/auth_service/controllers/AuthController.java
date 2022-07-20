@@ -28,6 +28,7 @@ public class AuthController {
                 .fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(1).toUri();
+
         LOGGER.info("Saved user #" + 1);
         return ResponseEntity.created(location).build();
     }
