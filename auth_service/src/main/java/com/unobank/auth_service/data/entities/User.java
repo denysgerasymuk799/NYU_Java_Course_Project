@@ -1,8 +1,14 @@
 package com.unobank.auth_service.data.entities;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import javax.validation.constraints.Size;
 
+@Document
 public class User {
+    @Id
+    private String id;
     @Size(min = 2, message = "firstName length must be > 1")
     private String firstName;
     @Size(min = 2, message = "lastName length must be > 1")
