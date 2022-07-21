@@ -1,6 +1,8 @@
 package com.unobank.auth_service.services;
 
 import com.unobank.auth_service.database.models.User;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -13,13 +15,13 @@ import java.util.List;
 
 public interface UserService {
 
-    User register(User user);
+    Mono<User> register(User user);
 
-    List<User> getAll();
+    Flux<User> getAll();
 
-    User findByUsername(String username);
+    Mono<User> findByEmail(String email);
 
-    User findById(Long id);
+    Mono<User> findById(String id);
 
-    void delete(Long id);
+    void deleteByEmail(String email);
 }

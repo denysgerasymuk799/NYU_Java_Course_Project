@@ -1,15 +1,16 @@
 package com.unobank.auth_service.security;
 
 import lombok.extern.slf4j.Slf4j;
-import com.unobank.auth_service.model.User;
+import com.unobank.auth_service.database.models.User;
 import com.unobank.auth_service.security.jwt.JwtUser;
 import com.unobank.auth_service.security.jwt.JwtUserFactory;
-import com.unobank.auth_service.service.UserService;
+import com.unobank.auth_service.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 /**
  * Implementation of {@link UserDetailsService} interface for {@link JwtUser}.
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class JwtUserDetailsService implements UserDetailsService {
+public class JwtUserDetailsService {
 
     private final UserService userService;
 
@@ -29,16 +30,16 @@ public class JwtUserDetailsService implements UserDetailsService {
         this.userService = userService;
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userService.findByUsername(username);
-
-        if (user == null) {
-            throw new UsernameNotFoundException("User with username: " + username + " not found");
-        }
-
-        JwtUser jwtUser = JwtUserFactory.create(user);
-        log.info("IN loadUserByUsername - user with username: {} successfully loaded", username);
-        return jwtUser;
+    public Mono<UserDetails> loadUserByUsername(String email) {
+        return userService.findByEmail(email)
+                .flatMap(user -> {
+                    if (user.getEmail().length() > 0) {
+                        JwtUser jwtUser = JwtUserFactory.create(user);
+                        log.info("IN loadUserByUsername - user with email: {} successfully loaded", email);
+                        return Mono.just(jwtUser);
+                    } else {
+                        return Mono.empty();
+                    }
+                });
     }
 }

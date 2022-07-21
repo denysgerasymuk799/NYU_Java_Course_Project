@@ -1,8 +1,7 @@
 package com.unobank.auth_service.security.jwt;
 
-import com.unobank.auth_service.model.Role;
-import com.unobank.auth_service.model.Status;
-import com.unobank.auth_service.model.User;
+import com.unobank.auth_service.database.models.Role;
+import com.unobank.auth_service.database.models.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -23,23 +22,23 @@ public final class JwtUserFactory {
     }
 
     public static JwtUser create(User user) {
+        ArrayList<Role> roles = new ArrayList<>();
+        roles.add(user.getRole());
         return new JwtUser(
                 user.getId(),
-                user.getUsername(),
+                user.getEmail(),
                 user.getFirstName(),
                 user.getLastName(),
-                user.getEmail(),
-                user.getPassword(),
-                mapToGrantedAuthorities(new ArrayList<>(user.getRoles())),
-                user.getStatus().equals(Status.ACTIVE),
-                user.getUpdated()
+                user.getHashedPassword(),
+                mapToGrantedAuthorities(roles),
+                false
         );
     }
 
     private static List<GrantedAuthority> mapToGrantedAuthorities(List<Role> userRoles) {
         return userRoles.stream()
                 .map(role ->
-                        new SimpleGrantedAuthority(role.getName())
+                        new SimpleGrantedAuthority(role.toString())
                 ).collect(Collectors.toList());
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.unobank.auth_service.database.dto.UserDto;
 import com.unobank.auth_service.database.models.User;
 import com.unobank.auth_service.services.UserService;
+import reactor.core.publisher.Mono;
 
 /**
  * REST controller for requests of simple users.
@@ -29,15 +30,15 @@ public class UserRestControllerV1 {
     }
 
     @GetMapping(value = "{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable(name = "id") Long id){
-        User user = userService.findById(id);
-
-        if(user == null){
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-
-        UserDto result = UserDto.fromUser(user);
-
-        return new ResponseEntity<>(result, HttpStatus.OK);
+    public Mono<ResponseEntity<UserDto>> getUserById(@PathVariable(name = "id") String id){
+        return userService.findById(id)
+                .flatMap(user -> {
+                    if (user.getEmail().length() > 0) {
+                        UserDto result = UserDto.fromUser(user);
+                        return Mono.just(new ResponseEntity<>(result, HttpStatus.OK));
+                    } else {
+                        return Mono.just(new ResponseEntity<UserDto>(HttpStatus.NO_CONTENT));
+                    }
+                });
     }
 }
