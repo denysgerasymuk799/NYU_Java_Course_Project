@@ -1,6 +1,6 @@
 package com.unobank.auth_service.controllers;
 
-import com.unobank.auth_service.data.repos.UserRepository;
+import com.unobank.auth_service.database.repos.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 
-import com.unobank.auth_service.data.entities.User;
-import reactor.core.publisher.Flux;
+import com.unobank.auth_service.database.entities.User;
 import reactor.core.publisher.Mono;
 
 
