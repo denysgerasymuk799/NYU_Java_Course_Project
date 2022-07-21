@@ -19,6 +19,9 @@ import java.util.Date;
 import java.util.List;
 
 import com.unobank.auth_service.database.models.Role;
+import reactor.core.publisher.Mono;
+
+import com.unobank.auth_service.security.JwtUserDetailsService;
 
 /**
  * Util class that provides methods for generation, validation, etc. of JWT token.
@@ -36,14 +39,12 @@ public class JwtTokenProvider {
     @Value("${jwt.token.expired}")
     private long validityInMilliseconds;
 
-
     @Autowired
-    private UserDetailsService userDetailsService;
+    private JwtUserDetailsService userDetailsService;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        return bCryptPasswordEncoder;
+        return new BCryptPasswordEncoder();
     }
 
     @PostConstruct
@@ -67,9 +68,11 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public Authentication getAuthentication(String token) {
-        UserDetails userDetails = this.userDetailsService.loadUserByUsername(getUsername(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    public Mono<Authentication> getAuthentication(String token) {
+        return this.userDetailsService.loadUserByUsername(getUsername(token))
+                .flatMap(userDetails -> {
+                    return Mono.just(new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities()));
+                });
     }
 
     public String getUsername(String token) {

@@ -3,15 +3,14 @@ package com.unobank.auth_service.services.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import lombok.extern.slf4j.Slf4j;
+
 import com.unobank.auth_service.database.models.Role;
 import com.unobank.auth_service.database.models.User;
 import com.unobank.auth_service.services.UserService;
 import com.unobank.auth_service.database.repos.UserRepository;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 
 /**
  * Implementation of {@link UserService} interface.
@@ -36,7 +35,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Mono<User> register(User user) {
         user.setHashedPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(Role.simple_user.toString());
+        user.setRole(Role.simple_user);
 //        user.setDisabled(false);
         Mono<User> registeredUser = userRepository.save(user);
         log.info("IN register - user: {} successfully registered", registeredUser);

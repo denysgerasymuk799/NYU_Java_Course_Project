@@ -5,6 +5,7 @@ import com.unobank.auth_service.database.models.User;
 import com.unobank.auth_service.security.jwt.JwtUser;
 import com.unobank.auth_service.security.jwt.JwtUserFactory;
 import com.unobank.auth_service.services.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
