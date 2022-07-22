@@ -1,7 +1,7 @@
 package com.unobank.auth_service.security.services;
 
 import com.unobank.auth_service.database.models.User;
-import com.unobank.auth_service.database.repository.UserRepository;
+import com.unobank.auth_service.database.repos.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

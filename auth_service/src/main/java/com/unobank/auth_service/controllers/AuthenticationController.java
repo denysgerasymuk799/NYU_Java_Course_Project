@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 import com.unobank.auth_service.database.models.ERole;
 import com.unobank.auth_service.database.models.Role;
@@ -23,15 +24,16 @@ import com.unobank.auth_service.payload.request.LoginRequest;
 import com.unobank.auth_service.payload.request.SignupRequest;
 import com.unobank.auth_service.payload.response.JwtResponse;
 import com.unobank.auth_service.payload.response.MessageResponse;
-import com.unobank.auth_service.database.repository.RoleRepository;
-import com.unobank.auth_service.database.repository.UserRepository;
+import com.unobank.auth_service.database.repos.RoleRepository;
+import com.unobank.auth_service.database.repos.UserRepository;
 import com.unobank.auth_service.security.jwt.JwtUtils;
 import com.unobank.auth_service.security.services.UserDetailsImpl;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/auth")
-public class AuthController {
+@Slf4j
+@RequestMapping("/api/authentication")
+public class AuthenticationController {
 	@Autowired
 	JwtUtils jwtUtils;
 	@Autowired
@@ -96,6 +98,7 @@ public class AuthController {
 
 		user.setRoles(roles);
 		userRepository.save(user);
+		log.info("User with username {} is successfully saved.", user.getUsername());
 
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	}
@@ -113,6 +116,8 @@ public class AuthController {
 		List<String> roles = userDetails.getAuthorities().stream()
 				.map(GrantedAuthority::getAuthority)
 				.collect(Collectors.toList());
+
+		log.info("User with username {} is successfully signed in.", userDetails.getUsername());
 
 		return ResponseEntity.ok(new JwtResponse(jwt,
 				userDetails.getId(),
