@@ -1,6 +1,6 @@
 package com.unobank.auth_service.security.services;
 
-import com.unobank.auth_service.models.User;
+import com.unobank.auth_service.database.models.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

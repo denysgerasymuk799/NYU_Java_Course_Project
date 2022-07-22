@@ -1,6 +1,6 @@
-package com.unobank.auth_service.repository;
+package com.unobank.auth_service.database.repository;
 
-import com.unobank.auth_service.models.User;
+import com.unobank.auth_service.database.models.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;
