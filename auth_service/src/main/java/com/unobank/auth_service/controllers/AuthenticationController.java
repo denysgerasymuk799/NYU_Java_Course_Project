@@ -97,7 +97,7 @@ public class AuthenticationController {
 		}
 
 		user.setRoles(roles);
-		userRepository.save(user);
+//		userRepository.save(user);
 		log.info("User with username {} is successfully saved.", user.getUsername());
 
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
