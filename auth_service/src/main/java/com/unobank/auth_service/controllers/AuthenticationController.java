@@ -1,5 +1,6 @@
 package com.unobank.auth_service.controllers;
 
+import com.unobank.auth_service.database.CassandraClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,6 +46,8 @@ public class AuthenticationController {
 	UserRepository userRepository;
 	@Autowired
 	AuthenticationManager authenticationManager;
+//	@Autowired
+//	CassandraClient cassandraClient;
 
 	@PostMapping("/signup")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
@@ -98,6 +102,12 @@ public class AuthenticationController {
 
 		user.setRoles(roles);
 //		userRepository.save(user);
+		try {
+			CassandraClient cassandraClient = new CassandraClient();
+			cassandraClient.insertOne();
+		} catch(NoSuchAlgorithmException e) {
+			System.err.println(e);
+		}
 		log.info("User with username {} is successfully saved.", user.getUsername());
 
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
