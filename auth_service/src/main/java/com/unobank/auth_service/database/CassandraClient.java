@@ -1,10 +1,11 @@
 package com.unobank.auth_service.database;
 
 import com.datastax.oss.driver.api.core.ConsistencyLevel;
-import com.aws.mcs.springsample.KeyspacesConfig;
 import com.datastax.oss.driver.api.core.CqlSession;
+import com.unobank.auth_service.configs.KeyspacesConfig;
 import com.unobank.auth_service.database.models.Company;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.cassandra.core.CassandraOperations;
 import org.springframework.data.cassandra.core.CassandraTemplate;
 import org.springframework.data.cassandra.core.EntityWriteResult;
@@ -24,8 +25,10 @@ public class CassandraClient implements AutoCloseable {
     private InsertOptions insertOptions;
 
     public CassandraClient() throws NoSuchAlgorithmException {
+        System.out.println("Enter CassandraClient()");
         // use Java-based bean metadata to register an instance of a com.datastax.oss.driver.api.core.CqlSession
         cqlSession = new KeyspacesConfig().session();
+        System.out.println("Initialized session");
 
         // You can also configure additional options such as TTL, consistency level, and lightweight transactions when using InsertOptions and UpdateOptions
         insertOptions = org.springframework.data.cassandra.core.InsertOptions.builder().

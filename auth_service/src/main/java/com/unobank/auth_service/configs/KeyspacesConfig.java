@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-package com.aws.mcs.springsample;
+package com.unobank.auth_service.configs;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
@@ -19,7 +19,6 @@ import io.github.cdimascio.dotenv.Dotenv;
 
 @Configuration
 public class KeyspacesConfig {
-    File driverConfig = new File("./application.conf");
     @Primary
     public @Bean
     CqlSession session() throws NoSuchAlgorithmException {
