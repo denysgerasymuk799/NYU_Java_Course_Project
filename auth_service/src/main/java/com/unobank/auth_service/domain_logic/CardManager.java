@@ -8,26 +8,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.unobank.auth_service.database.models.Card;
 import com.unobank.auth_service.database.repos.RegistrationCardsRepository;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Objects;
 
 @Service
 @Slf4j
 public class CardManager {
     private RegistrationCardsRepository mongoCardsRepo;
-
     private CassandraClient cassandraClient;
-
     private Dotenv dotenv;
-
     private String cardTable;
     private String unique_users_daily;
 
@@ -46,14 +40,13 @@ public class CardManager {
     }
 
     private Card allocateCard() {
-        log.info("Allocating a card for the new user");
+        log.info("Allocating a card for the new user ...");
         Card card = mongoCardsRepo.findOneByEnabled(false).findFirst().orElse(null);
-        System.out.println("Card: " + card);
 
         if (card == null) {
             return null;
         }
-        log.info("Found available card in db: card id -- {}", card.getCardId());
+        log.info("Found an available card in db: card id -- {}", card.getCardId());
 
         // Mark it as taken
         card.setEnabled(true);

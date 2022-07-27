@@ -1,7 +1,6 @@
 package com.unobank.auth_service.controllers;
 
 import com.datastax.oss.driver.api.core.servererrors.InvalidQueryException;
-import com.unobank.auth_service.database.CassandraClient;
 import com.unobank.auth_service.domain_logic.CardManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,7 +35,7 @@ import com.unobank.auth_service.security.services.UserDetailsImpl;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @Slf4j
-@RequestMapping("/api/authentication")
+@RequestMapping("/api/auth")
 public class AuthenticationController {
 	@Autowired
 	JwtUtils jwtUtils;
@@ -53,7 +52,6 @@ public class AuthenticationController {
 
 	@PostMapping("/signup")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-		System.out.println("Enter registerUser");
 		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
 			return ResponseEntity
 					.badRequest()
@@ -65,6 +63,7 @@ public class AuthenticationController {
 					.badRequest()
 					.body(new MessageResponse("Error: Email is already in use!"));
 		}
+		log.info("Registration user {} in process ...", signUpRequest.getEmail());
 
 		// Create new user's account
 		User user = new User(signUpRequest.getUsername(), 
@@ -106,7 +105,8 @@ public class AuthenticationController {
 		user.setRoles(roles);
 		try {
 			String cardId = cardManager.assignCard();
-			//		userRepository.save(user);
+			user.setCardId(cardId);
+			userRepository.save(user);
 			log.info("User with username {} is successfully saved.", user.getUsername());
 		} catch(InvalidQueryException e) {
 			return new ResponseEntity<>(
