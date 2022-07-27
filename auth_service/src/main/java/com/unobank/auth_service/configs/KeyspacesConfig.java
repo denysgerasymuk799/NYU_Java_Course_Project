@@ -29,8 +29,7 @@ public class KeyspacesConfig {
                 .load();
         String username = dotenv.get("KEYSPACES_USERNAME");
         String password = dotenv.get("KEYSPACES_PASSWORD");
-        System.out.println("AppConfig username: " + username);
-        System.out.println("AppConfig password: " + password);
+
         return CqlSession.builder().
                 withConfigLoader(DriverConfigLoader.fromFile(driverConfig)).
                 withAuthCredentials(username, password).

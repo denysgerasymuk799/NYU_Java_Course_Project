@@ -1,7 +1,10 @@
 package com.unobank.auth_service.controllers;
 
+import com.datastax.oss.driver.api.core.servererrors.InvalidQueryException;
 import com.unobank.auth_service.database.CassandraClient;
+import com.unobank.auth_service.domain_logic.CardManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,7 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,8 +48,8 @@ public class AuthenticationController {
 	UserRepository userRepository;
 	@Autowired
 	AuthenticationManager authenticationManager;
-//	@Autowired
-//	CassandraClient cassandraClient;
+	@Autowired
+	CardManager cardManager;
 
 	@PostMapping("/signup")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
@@ -102,14 +104,15 @@ public class AuthenticationController {
 		}
 
 		user.setRoles(roles);
-//		userRepository.save(user);
 		try {
-			CassandraClient cassandraClient = new CassandraClient();
-			cassandraClient.insertOne();
-		} catch(NoSuchAlgorithmException e) {
-			System.err.println(e);
+			String cardId = cardManager.assignCard();
+			//		userRepository.save(user);
+			log.info("User with username {} is successfully saved.", user.getUsername());
+		} catch(InvalidQueryException e) {
+			return new ResponseEntity<>(
+					"Can not assign a card. Please try again in 5 minutes.",
+					HttpStatus.BAD_REQUEST);
 		}
-		log.info("User with username {} is successfully saved.", user.getUsername());
 
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	}

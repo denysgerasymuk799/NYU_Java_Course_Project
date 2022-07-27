@@ -3,6 +3,7 @@ package com.unobank.auth_service.database.models;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -15,6 +16,7 @@ public class Card {
 
   @NotBlank
   @Size(min=16, max=16)
+  @Field(name = "card_id")
   private String cardId;
 
   @NotBlank
@@ -25,6 +27,7 @@ public class Card {
 
   @NotBlank
   @Size(min=5, max=5)
+  @Field(name = "expiration_date")
   private String expirationDate;
 
   public Card() {
