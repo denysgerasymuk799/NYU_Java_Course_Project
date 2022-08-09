@@ -1,4 +1,4 @@
-package com.unobank.orchestrator_service.request;
+package com.unobank.orchestrator_service.payload.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.unobank.orchestrator_service.domain_logic.enums.TransactionType;

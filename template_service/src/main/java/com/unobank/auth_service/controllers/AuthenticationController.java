@@ -1,9 +1,6 @@
 package com.unobank.auth_service.controllers;
 
-import com.datastax.oss.driver.api.core.servererrors.InvalidQueryException;
-import com.unobank.auth_service.domain_logic.CardManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,7 +32,7 @@ import com.unobank.auth_service.security.services.UserDetailsImpl;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @Slf4j
-@RequestMapping("/api/auth")
+@RequestMapping("/api/authentication")
 public class AuthenticationController {
 	@Autowired
 	JwtUtils jwtUtils;
@@ -47,8 +44,6 @@ public class AuthenticationController {
 	UserRepository userRepository;
 	@Autowired
 	AuthenticationManager authenticationManager;
-	@Autowired
-	CardManager cardManager;
 
 	@PostMapping("/signup")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
@@ -63,7 +58,6 @@ public class AuthenticationController {
 					.badRequest()
 					.body(new MessageResponse("Error: Email is already in use!"));
 		}
-		log.info("Registration user {} in process ...", signUpRequest.getEmail());
 
 		// Create new user's account
 		User user = new User(signUpRequest.getUsername(), 
@@ -103,16 +97,8 @@ public class AuthenticationController {
 		}
 
 		user.setRoles(roles);
-		try {
-			String cardId = cardManager.assignCard();
-			user.setCardId(cardId);
-			userRepository.save(user);
-			log.info("User with username {} is successfully saved.", user.getUsername());
-		} catch(InvalidQueryException e) {
-			return new ResponseEntity<>(
-					"Can not assign a card. Please try again in 5 minutes.",
-					HttpStatus.BAD_REQUEST);
-		}
+		userRepository.save(user);
+		log.info("User with username {} is successfully saved.", user.getUsername());
 
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	}
@@ -136,7 +122,6 @@ public class AuthenticationController {
 		return ResponseEntity.ok(new JwtResponse(jwt,
 				userDetails.getId(),
 				userDetails.getUsername(),
-				userDetails.getCardId(),
 				userDetails.getEmail(),
 				roles));
 	}

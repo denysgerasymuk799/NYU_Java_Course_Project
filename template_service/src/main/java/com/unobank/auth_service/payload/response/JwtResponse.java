@@ -7,15 +7,13 @@ public class JwtResponse {
 	private String type = "Bearer";
 	private String id;
 	private String username;
-	private String cardId;
 	private String email;
 	private List<String> roles;
 
-	public JwtResponse(String accessToken, String id, String username, String cardId, String email, List<String> roles) {
+	public JwtResponse(String accessToken, String id, String username, String email, List<String> roles) {
 		this.token = accessToken;
 		this.id = id;
 		this.username = username;
-		this.cardId = cardId;
 		this.email = email;
 		this.roles = roles;
 	}

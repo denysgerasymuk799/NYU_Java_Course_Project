@@ -22,6 +22,7 @@ public class JwtUtils {
 	private int jwtExpirationMs;
 
 	public String generateJwtToken(Authentication authentication) {
+
 		UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 
 		return Jwts.builder()
@@ -29,27 +30,11 @@ public class JwtUtils {
 				.setIssuedAt(new Date())
 				.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
 				.signWith(SignatureAlgorithm.HS512, jwtSecret)
-				.claim("user_details", new RestUserDetails(userPrincipal.getCardId(), userPrincipal.getEmail(),
-						userPrincipal.getAuthorities()))
 				.compact();
 	}
 
 	public String getUserNameFromJwtToken(String token) {
 		return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
-	}
-
-	public Claims getAllClaimsFromToken(String token) {
-		Claims claims;
-		try {
-			claims = Jwts.parser()
-					.setSigningKey(this.jwtSecret)
-					.parseClaimsJws(token)
-					.getBody();
-		} catch (Exception e) {
-			logger.error("Could not get all claims Token from passed token");
-			claims = null;
-		}
-		return claims;
 	}
 
 	public boolean validateJwtToken(String authToken) {
