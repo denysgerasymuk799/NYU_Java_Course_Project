@@ -1,26 +1,24 @@
 package com.unobank.orchestrator_service.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.unobank.orchestrator_service.domain_logic.CustomValidator;
-import com.unobank.orchestrator_service.payload.request.TransactionRequest;
-import com.unobank.orchestrator_service.payload.response.MessageResponse;
-import com.unobank.orchestrator_service.security.jwt.JwtUtils;
+import com.unobank.orchestrator_service.payload.response.SuccessfulTransactionResponse;
 import lombok.extern.slf4j.Slf4j;
-import io.jsonwebtoken.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.stream.Collectors;
+import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Validator;
+
+import com.unobank.orchestrator_service.domain_logic.TransactionHandler;
+import com.unobank.orchestrator_service.payload.request.TransactionRequest;
+import com.unobank.orchestrator_service.payload.response.MessageResponse;
+import com.unobank.orchestrator_service.security.jwt.JwtUtils;
 
 
 /**
@@ -37,49 +35,35 @@ public class OrchestratorController {
 	private JwtUtils jwtUtils;
 
 	@Autowired
-	private CustomValidator validator;
+	private TransactionHandler transactionHandler;
 
 	@PostMapping("/handle_transaction")
 	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-//	public String handleTransaction(@Valid @RequestBody TransactionRequest transactionRequest) {
 	public ResponseEntity<?> handleTransaction(HttpServletRequest request) {
 		log.info("Process a new transaction.");
 		String jwt = parseJwt(request);
-		String username = jwtUtils.getUserNameFromJwtToken(jwt);
-		log.info("User {} is making a transaction", username);
+		String transactionId = UUID.randomUUID().toString();
 
-		Claims jwtClaims = jwtUtils.getAllClaimsFromToken(jwt);
-		LinkedHashMap<String, String> userDetails = jwtClaims.get("user_details", LinkedHashMap.class);
-
-		ObjectMapper mapper = new ObjectMapper();
-		TransactionRequest transactionRequest;
 		try {
-//			String requestBody = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-			transactionRequest = mapper.readValue(request.getReader(), TransactionRequest.class);
-			ArrayList<String> violationMessages = validator.validateRequest(transactionRequest);
-			if (violationMessages.size() != 0) {
-				String errMessages = violationMessages.stream().collect(Collectors.joining("  \n"));
-				return new ResponseEntity<>(
-						"Input fields are in an incorrect format. Error messages: " + errMessages,
-						HttpStatus.BAD_REQUEST);
+			ObjectMapper mapper = new ObjectMapper();
+			TransactionRequest transactionRequest = mapper.readValue(request.getReader(), TransactionRequest.class);
+			String errorMessage = transactionHandler.handleTransaction(jwt, transactionRequest, transactionId);
+			if (errorMessage != null) {
+				return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
 			}
-
-			if (userDetails.get("card_id").equals(transactionRequest.getSenderCardId())) {
-				return new ResponseEntity<>(
-						"Authorized user card id is not equal to sender card id in the request body.",
-						HttpStatus.METHOD_NOT_ALLOWED);
-			}
-
-			System.out.println("transactionRequest: " + transactionRequest);
-			System.out.println("transactionRequest amount: " + transactionRequest.getAmount());
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			log.error(e.toString());
 			return new ResponseEntity<>(
-					"Can not assign a card. Please try again in 5 minutes.",
+					"Incorrect type of parameters in the request body. Error message: " + e.toString(),
+					HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			log.error(e.toString());
+			return new ResponseEntity<>(
+					"Incorrect transaction. Error message: " + e.toString(),
 					HttpStatus.BAD_REQUEST);
 		}
 
-		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+		return ResponseEntity.ok(new SuccessfulTransactionResponse(transactionId));
 	}
 
 	private String parseJwt(HttpServletRequest request) {

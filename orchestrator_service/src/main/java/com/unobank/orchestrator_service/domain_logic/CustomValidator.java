@@ -21,9 +21,8 @@ public class CustomValidator<T> {
         ArrayList<String> violationMessages = new ArrayList<>();
         Set<ConstraintViolation<T>> violations = validator.validate(object);
         for (ConstraintViolation<T> violation : violations) {
-            String errMessage = violation.getMessage();
-            violationMessages.add(errMessage);
-            log.error(errMessage);
+            violationMessages.add(violation.toString());
+            log.error(violation.toString());
         }
         return violationMessages;
     }

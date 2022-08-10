@@ -20,12 +20,10 @@ public class TransactionRequest {
 	@Size(min = 16, max = 16)
 	private String receiverCardId;
 
-	@NotBlank
 	@JsonProperty("amount")
 	@DecimalMin("1.0")
 	private float amount;
 
-	@NotBlank
 	@JsonProperty("transaction_type")
 	private TransactionType transactionType;
 }
