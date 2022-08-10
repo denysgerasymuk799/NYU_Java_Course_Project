@@ -1,6 +1,7 @@
 package com.unobank.orchestrator_service.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.unobank.orchestrator_service.domain_logic.CustomValidator;
 import com.unobank.orchestrator_service.payload.request.TransactionRequest;
 import com.unobank.orchestrator_service.payload.response.MessageResponse;
 import com.unobank.orchestrator_service.security.jwt.JwtUtils;
@@ -11,11 +12,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Validator;
 
 
 /**
@@ -30,6 +35,9 @@ import javax.servlet.http.HttpServletRequest;
 public class OrchestratorController {
 	@Autowired
 	private JwtUtils jwtUtils;
+
+	@Autowired
+	private CustomValidator validator;
 
 	@PostMapping("/handle_transaction")
 	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
@@ -46,7 +54,22 @@ public class OrchestratorController {
 		ObjectMapper mapper = new ObjectMapper();
 		TransactionRequest transactionRequest;
 		try {
+//			String requestBody = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
 			transactionRequest = mapper.readValue(request.getReader(), TransactionRequest.class);
+			ArrayList<String> violationMessages = validator.validateRequest(transactionRequest);
+			if (violationMessages.size() != 0) {
+				String errMessages = violationMessages.stream().collect(Collectors.joining("  \n"));
+				return new ResponseEntity<>(
+						"Input fields are in an incorrect format. Error messages: " + errMessages,
+						HttpStatus.BAD_REQUEST);
+			}
+
+			if (userDetails.get("card_id").equals(transactionRequest.getSenderCardId())) {
+				return new ResponseEntity<>(
+						"Authorized user card id is not equal to sender card id in the request body.",
+						HttpStatus.METHOD_NOT_ALLOWED);
+			}
+
 			System.out.println("transactionRequest: " + transactionRequest);
 			System.out.println("transactionRequest amount: " + transactionRequest.getAmount());
 		} catch (IOException e) {
@@ -55,10 +78,6 @@ public class OrchestratorController {
 					"Can not assign a card. Please try again in 5 minutes.",
 					HttpStatus.BAD_REQUEST);
 		}
-
-		// TODO: validate values in request body
-
-		// TODO: check cardId from JWT == sender_card_id
 
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	}
