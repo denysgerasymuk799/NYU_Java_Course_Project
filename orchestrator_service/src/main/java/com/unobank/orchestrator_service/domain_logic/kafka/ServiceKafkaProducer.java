@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unobank.orchestrator_service.domain_logic.Constants;
 import com.unobank.orchestrator_service.dto.TransactionMessage;
 
+import java.util.UUID;
+
 @Slf4j
 @Component
 public class ServiceKafkaProducer {
@@ -24,16 +26,9 @@ public class ServiceKafkaProducer {
 	@Autowired
 	ObjectMapper objectMapper;
 
-	/**
-	 * Use the following command to view message in the console:
-	 *  ./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic TransactionService --from-beginning
-	 *
-	 * @param transactionMessage
-	 * @throws JsonProcessingException
-	 */
 	public void processTransaction(TransactionMessage transactionMessage) throws JsonProcessingException {
 		transactionMessage.setProducer(producerName);
-		String key = transactionMessage.getSenderCardId();
+		String key = (transactionMessage.getReceiverCardId() == null) ? UUID.randomUUID().toString() : transactionMessage.getReceiverCardId();
 		String value = objectMapper.writeValueAsString(transactionMessage);
 
 		assert Constants.TRANSACTIONS_TOPIC != null;

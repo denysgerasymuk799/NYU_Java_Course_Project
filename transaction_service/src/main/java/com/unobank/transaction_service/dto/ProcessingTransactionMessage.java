@@ -1,11 +1,13 @@
 package com.unobank.transaction_service.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import java.sql.Timestamp;
 import java.util.Date;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProcessingTransactionMessage {
     Timestamp createTimestamp;
     String eventName;

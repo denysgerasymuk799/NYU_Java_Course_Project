@@ -15,9 +15,12 @@ public class TransactionService {
     @Autowired
     private TransactionServiceOperator operator;
 
-    public void createTransaction(TransactionMessage transaction) {
+    public ProcessingTransactionMessage createTransaction(TransactionMessage transaction) {
         TransactionDto transactionDto = TransactionDto.fromTransactionMessage(transaction, TransactionStatus.NEW);
-        ProcessingTransactionMessage processingTransactionMessage = new ProcessingTransactionMessage(
+
+        // Create an entry in the Transaction table with NEW status
+        operator.createTransactionRecord(transactionDto);
+        return new ProcessingTransactionMessage(
                 Events.TRANSACTION_CREATED.label, Constants.MESSAGE_TYPE_REQUEST, Constants.RESPONSE_SUCCESS,
                 Constants.TRANSACTION_SERVICE_PRODUCER_NAME, "", transactionDto);
     }

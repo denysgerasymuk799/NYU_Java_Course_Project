@@ -2,7 +2,7 @@ package com.unobank.orchestrator_service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import java.sql.Timestamp;
 
 @Data
 @AllArgsConstructor
@@ -11,4 +11,5 @@ public class TransactionInfo {
     String senderCardId;
     String receiverCardId;
     float amount;
+    Timestamp createTimestamp;
 }

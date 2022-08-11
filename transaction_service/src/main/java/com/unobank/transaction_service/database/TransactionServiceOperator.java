@@ -6,10 +6,13 @@ import com.unobank.transaction_service.domain_logic.enums.TransactionType;
 import com.unobank.transaction_service.dto.TransactionDto;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+@Component
 public class TransactionServiceOperator {
     @Autowired
     private CassandraClient cassandraClient;

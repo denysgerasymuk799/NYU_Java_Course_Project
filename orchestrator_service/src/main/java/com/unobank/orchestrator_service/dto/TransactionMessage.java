@@ -1,6 +1,8 @@
 package com.unobank.orchestrator_service.dto;
 
 import com.unobank.orchestrator_service.payload.request.TransactionRequest;
+import java.sql.Timestamp;
+import java.util.Date;
 import lombok.Data;
 
 @Data
@@ -20,6 +22,10 @@ public class TransactionMessage {
         return data.getSenderCardId();
     }
 
+    public String getReceiverCardId() {
+        return data.getReceiverCardId();
+    }
+
     public TransactionMessage(String eventName, String messageType, int responseType,
                               String message, String transactionId, TransactionRequest request) {
         this.eventName = eventName;
@@ -27,6 +33,8 @@ public class TransactionMessage {
         this.responseType = responseType;
         this.message = message;
 
-        this.data = new TransactionInfo(transactionId, request.getSenderCardId(), request.getReceiverCardId(), request.getAmount());
+        Date date = new Date();
+        this.data = new TransactionInfo(transactionId, request.getSenderCardId(), request.getReceiverCardId(),
+                request.getAmount(), new Timestamp(date.getTime()));
     }
 }

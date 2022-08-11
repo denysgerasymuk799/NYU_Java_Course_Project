@@ -9,6 +9,7 @@
 *.jks
 *.der
 application.conf
+application.yml
 
 *.properties
 .mvn
