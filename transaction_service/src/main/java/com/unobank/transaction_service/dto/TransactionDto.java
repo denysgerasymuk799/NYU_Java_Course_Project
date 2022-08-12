@@ -13,15 +13,15 @@ public class TransactionDto {
     String transactionId;
     String senderCardId;
     String receiverCardId;
-    float amount;
+    int amount;
     Timestamp createTimestamp;
     TransactionStatus status;
 
     public static TransactionDto fromTransactionMessage(TransactionMessage transactionMessage, TransactionStatus status) {
         TransactionDto transactionDto = new TransactionDto();
-        transactionDto.setTransactionId(transactionMessage.getTransactionId());
-        transactionDto.setSenderCardId(transactionMessage.getSenderCardId());
-        transactionDto.setReceiverCardId(transactionMessage.getReceiverCardId());
+        transactionDto.setTransactionId(transactionMessage.getData().getTransactionId());
+        transactionDto.setSenderCardId(transactionMessage.getData().getSenderCardId());
+        transactionDto.setReceiverCardId(transactionMessage.getData().getReceiverCardId());
         transactionDto.setAmount(transactionMessage.getData().getAmount());
         transactionDto.setStatus(status);
 

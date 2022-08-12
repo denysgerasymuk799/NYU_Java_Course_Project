@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.cassandra.core.InsertOptions;
 import org.springframework.stereotype.Component;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.unobank.transaction_service.configs.KeyspacesConfig;

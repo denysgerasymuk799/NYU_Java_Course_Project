@@ -1,5 +1,6 @@
 package com.unobank.transaction_service.configs;
 
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsConfig;
@@ -26,7 +27,9 @@ public class KafkaStreamConfig {
 		props.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, "3000");
 		props.put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE_V2);
 		props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
-		
+		props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
+		props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
+
 		return new KafkaStreamsConfiguration(props);
 	}
 }

@@ -6,7 +6,6 @@ import com.unobank.transaction_service.domain_logic.enums.TransactionType;
 import com.unobank.transaction_service.dto.TransactionDto;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
@@ -49,25 +48,25 @@ public class TransactionServiceOperator {
         }
 
         // Insert transaction record into table
-        String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
+        String date = new SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date());
         query = String.format("INSERT INTO %s (transaction_id, card_id, receiver_card_id, amount, status, date) " +
                 "VALUES ('%s', '%s', '%s', %s, '%s', '%s')",
                 transactionTable, transaction.getTransactionId(), transaction.getSenderCardId(), transaction.getReceiverCardId(),
-                transaction.getAmount(), transaction.getStatus(), timestamp);
+                transaction.getAmount(), transaction.getStatus(), date);
         cassandraClient.executeInsertQuery(query);
 
         // In this query we have card_id and sender_card_id, since primary key in Cassandra table is transaction_id and card_id
         query = String.format("INSERT INTO %s (transaction_id, card_id, sender_card_id, receiver_card_id, amount, status, date) " +
                         "VALUES ('%s', '%s', '%s', '%s', %s, '%s', '%s')",
                 transactionByCardTable, transaction.getTransactionId(), transaction.getSenderCardId(), transaction.getSenderCardId(),
-                transaction.getReceiverCardId(), transaction.getAmount(), transaction.getStatus(), timestamp);
+                transaction.getReceiverCardId(), transaction.getAmount(), transaction.getStatus(), date);
         cassandraClient.executeInsertQuery(query);
 
         if (transaction.getReceiverCardId().equals(TransactionType.TOP_UP.toString())) {
             query = String.format("INSERT INTO %s (transaction_id, card_id, sender_card_id, receiver_card_id, amount, status, date) " +
                             "VALUES ('%s', '%s', '%s', '%s', %s, '%s', '%s')",
                     transactionByCardTable, transaction.getTransactionId(), transaction.getReceiverCardId(), transaction.getSenderCardId(),
-                    transaction.getReceiverCardId(), transaction.getAmount(), transaction.getStatus(), timestamp);
+                    transaction.getReceiverCardId(), transaction.getAmount(), transaction.getStatus(), date);
             cassandraClient.executeInsertQuery(query);
         }
     }
