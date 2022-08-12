@@ -14,18 +14,6 @@ public class TransactionMessage {
     String message;
     TransactionInfo data;
 
-    public String getTransactionId() {
-        return data.getTransactionId();
-    }
-
-    public String getSenderCardId() {
-        return data.getSenderCardId();
-    }
-
-    public String getReceiverCardId() {
-        return data.getReceiverCardId();
-    }
-
     public TransactionMessage(String eventName, String messageType, int responseType,
                               String message, String transactionId, TransactionRequest request) {
         this.eventName = eventName;
@@ -35,6 +23,6 @@ public class TransactionMessage {
 
         Date date = new Date();
         this.data = new TransactionInfo(transactionId, request.getSenderCardId(), request.getReceiverCardId(),
-                request.getAmount(), new Timestamp(date.getTime()));
+                request.getAmount(), new Timestamp(date.getTime()), date);
     }
 }

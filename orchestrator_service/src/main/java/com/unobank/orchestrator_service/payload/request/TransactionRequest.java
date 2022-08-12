@@ -22,7 +22,7 @@ public class TransactionRequest {
 
 	@JsonProperty("amount")
 	@DecimalMin("1.0")
-	private float amount;
+	private int amount;
 
 	@JsonProperty("transaction_type")
 	private TransactionType transactionType;

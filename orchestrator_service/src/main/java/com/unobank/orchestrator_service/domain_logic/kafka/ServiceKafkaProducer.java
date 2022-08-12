@@ -28,7 +28,7 @@ public class ServiceKafkaProducer {
 
 	public void processTransaction(TransactionMessage transactionMessage) throws JsonProcessingException {
 		transactionMessage.setProducer(producerName);
-		String key = (transactionMessage.getReceiverCardId() == null) ? UUID.randomUUID().toString() : transactionMessage.getReceiverCardId();
+		String key = (transactionMessage.getData().getReceiverCardId() == null) ? UUID.randomUUID().toString() : transactionMessage.getData().getReceiverCardId();
 		String value = objectMapper.writeValueAsString(transactionMessage);
 
 		assert Constants.TRANSACTIONS_TOPIC != null;
