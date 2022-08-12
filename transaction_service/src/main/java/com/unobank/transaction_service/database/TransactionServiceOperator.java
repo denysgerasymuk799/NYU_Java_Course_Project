@@ -1,15 +1,21 @@
 package com.unobank.transaction_service.database;
 
 import com.datastax.oss.driver.api.core.cql.Row;
+import com.unobank.transaction_service.database.models.TransactionRecord;
 import com.unobank.transaction_service.domain_logic.Utils;
+import com.unobank.transaction_service.domain_logic.enums.TransactionStatus;
 import com.unobank.transaction_service.domain_logic.enums.TransactionType;
 import com.unobank.transaction_service.dto.TransactionDto;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class TransactionServiceOperator {
@@ -19,6 +25,7 @@ public class TransactionServiceOperator {
     private String cardTable;
     private String transactionTable;
     private String transactionByCardTable;
+    private String successfulTransactionsDailyTable;
 
     public TransactionServiceOperator() {
         this.dotenv = Dotenv
@@ -28,6 +35,23 @@ public class TransactionServiceOperator {
         this.cardTable = dotenv.get("CARD_TABLE");
         this.transactionTable = dotenv.get("TRANSACTIONS_TABLE");
         this.transactionByCardTable = dotenv.get("TRANSACTIONS_BY_CARD_TABLE");
+        this.successfulTransactionsDailyTable = dotenv.get("SUCCESSFUL_TRANSACTIONS_DAILY_TABLE");
+    }
+
+    public TransactionRecord getTransactionRecord(TransactionDto transaction) {
+        // TODO: check if this query really requires toUnixTimestamp(date)
+        String query = String.format("SELECT transaction_id, card_id, receiver_card_id, amount, status, date" +
+                "FROM %s" +
+                "WHERE transaction_id = ?", transactionTable);
+        List<Row> results = cassandraClient.selectOne(query, transaction.getTransactionId());
+        if (results.size() <= 0) {
+            return null;
+        }
+        Row result = results.get(0);
+        System.out.println("result: " + result);
+        return new TransactionRecord(result.getString("transaction_id"), result.getString("sender_card_id"),
+                result.getString("receiver_card_id"), result.getInt("amount"),
+                TransactionStatus.valueOf(result.getString("status")), Objects.requireNonNull(result.getLocalDate("date")));
     }
 
     public void createTransactionRecord(TransactionDto transaction) {
@@ -69,5 +93,57 @@ public class TransactionServiceOperator {
                     transaction.getReceiverCardId(), transaction.getAmount(), transaction.getStatus(), date);
             cassandraClient.executeInsertQuery(query);
         }
+    }
+
+    public void updateTransactionStatus(TransactionDto transaction, TransactionStatus status) {
+        // Get transaction record
+        String query = String.format("SELECT card_id, toUnixTimestamp(date), receiver_card_id FROM %s" +
+                "WHERE transaction_id = ?", transactionTable);
+        List<Row> results = cassandraClient.selectOne(query, transaction.getTransactionId());
+        if (results.size() <= 0) {
+            return;
+        }
+
+        String senderCardId = results.get(0).getString("card_id");
+        LocalDate date = results.get(0).getLocalDate("date");
+        String receiverCardId = results.get(0).getString("receiver_card_id");
+        System.out.println("date: " + date);
+
+        // Update transaction record
+        query = String.format("UPDATE %s" +
+                "SET status = '%s" +
+                "WHERE transaction_id = '%s' AND card_id = '%s' AND date = '%s'",
+                transactionTable, status, transaction.getTransactionId(), senderCardId, date);
+        cassandraClient.executeInsertQuery(query);
+        query = String.format("UPDATE %s" +
+                        "SET status = '%s" +
+                        "WHERE card_id = '%s' AND date = '%s' AND transaction_id = '%s'",
+                transactionByCardTable, status, senderCardId, date, transaction.getTransactionId());
+        cassandraClient.executeInsertQuery(query);
+
+        assert receiverCardId != null;
+        if (receiverCardId.equals(TransactionType.TOP_UP.toString())) {
+            // TODO: check if 'value' for date column is correct
+            query = String.format("UPDATE %s" +
+                            "SET status = '%s'" +
+                            "WHERE card_id = '%s' AND date='%s' AND transaction_id = '%s'",
+                    transactionByCardTable, status, receiverCardId, date, transaction.getTransactionId());
+            cassandraClient.executeInsertQuery(query);
+        }
+    }
+
+    public void saveSuccessfulTransaction(TransactionDto transaction) {
+        // Get transaction record
+        TransactionRecord record = this.getTransactionRecord(transaction);
+        if (record == null)
+            return;
+
+        // Save successful transaction with its completion date
+        Date date = new Date();
+        String query = String.format("INSERT INTO %s (transaction_id, card_id, receiver_card_id, amount, date)" +
+                        "VALUES ('%s', '%s', '%s', %d, '%s')",
+                successfulTransactionsDailyTable, record.getTransactionId(), record.getSenderCardId(),
+                record.getReceiverCardId(), record.getAmount(), date);
+        cassandraClient.executeInsertQuery(query);
     }
 }

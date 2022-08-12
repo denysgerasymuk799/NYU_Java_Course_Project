@@ -9,6 +9,7 @@ public enum Events {
     RESERVATION_CANCEL("EventReservationCancel"),
     TRANSACTION_PENDING("EventTransactionPending"),
     TRANSACTION_SUCCESS("EventTransactionSuccess"),
+    TRANSACTION_COMPLETED("EventTransactionCompleted"),
     TRANSACTION_FAILURE("EventTransactionFailure"),
     TRANSACTION_CANCELLED("EventTransactionCancelled");
 

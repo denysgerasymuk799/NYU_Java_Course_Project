@@ -2,6 +2,7 @@ package com.unobank.transaction_service.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.unobank.transaction_service.domain_logic.enums.TransactionStatus;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -15,6 +16,7 @@ public class TransactionDto {
     String receiverCardId;
     int amount;
     Timestamp createTimestamp;
+    Date date;
     TransactionStatus status;
 
     public static TransactionDto fromTransactionMessage(TransactionMessage transactionMessage, TransactionStatus status) {
@@ -23,6 +25,7 @@ public class TransactionDto {
         transactionDto.setSenderCardId(transactionMessage.getData().getSenderCardId());
         transactionDto.setReceiverCardId(transactionMessage.getData().getReceiverCardId());
         transactionDto.setAmount(transactionMessage.getData().getAmount());
+        transactionDto.setDate(transactionMessage.getData().getDate());
         transactionDto.setStatus(status);
 
         Date date = new Date();

@@ -1,9 +1,9 @@
 package com.unobank.transaction_service.domain_logic;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.unobank.transaction_service.dto.ProcessingTransactionMessage;
-import com.unobank.transaction_service.dto.TransactionMessage;
+import com.unobank.transaction_service.domain_logic.enums.TransactionStatus;
 import io.github.cdimascio.dotenv.Dotenv;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -14,6 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.unobank.transaction_service.domain_logic.enums.Events;
+import com.unobank.transaction_service.dto.ProcessingTransactionMessage;
+import com.unobank.transaction_service.dto.TransactionMessage;
+
+@Slf4j
 @Configuration
 public class TransactionsStream {
 	@Autowired
@@ -45,10 +50,19 @@ public class TransactionsStream {
 		try {
 			TransactionMessage transaction = inputObjectMapper.readValue(message, TransactionMessage.class);
 			System.out.println("transaction: " + transaction);
-			ProcessingTransactionMessage messageForCardService = transactionService.createTransaction(transaction);
-//			if (transaction.getEventName().equals(Events.TRANSACTION_REQUEST.label)) {
-//				messageForCardService = transactionService.createTransaction(transaction);
-//			}
+			log.info("Start a new transaction: [{}]. Event: {}.", transaction.getData().getTransactionId(), transaction.getEventName());
+
+			ProcessingTransactionMessage messageForCardService;
+			if (transaction.getEventName().equals(Events.TRANSACTION_REQUEST.label)) {
+				messageForCardService = transactionService.createTransaction(transaction);
+			} else if (transaction.getEventName().equals(Events.RESERVATION_SUCCESS.label)) {
+				messageForCardService = transactionService.executeTransaction(transaction);
+			} else if (transaction.getEventName().equals(Events.TRANSACTION_SUCCESS.label)) {
+				messageForCardService = transactionService.setTransactionCompletionStatus(transaction, TransactionStatus.COMPLETED);
+			} else {
+				messageForCardService = transactionService.setTransactionCompletionStatus(transaction, TransactionStatus.FAILED);
+			}
+			log.info("Completed the transaction: [{}]. Event: {}.", transaction.getData().getTransactionId(), transaction.getEventName());
 			return outputObjectMapper.writeValueAsString(messageForCardService);
 		} catch (Exception e) {
 			System.out.println(e.toString());
