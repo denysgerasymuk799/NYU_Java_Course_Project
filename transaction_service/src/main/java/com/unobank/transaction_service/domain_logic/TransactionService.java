@@ -18,8 +18,6 @@ public class TransactionService {
     @Autowired
     private TransactionServiceOperator operator;
 
-    // TODO: add create_topup_transaction()
-
     /**
      * Create balance top up transaction record in the database.
      * Notify card service to top up balance for the current transaction.
@@ -27,11 +25,13 @@ public class TransactionService {
      * @return ProcessingTransactionMessage for CardService.
      */
     public ProcessingTransactionMessage createTopupTransaction(ProcessingTransactionMessage transaction) {
+        // Create TransactionDto from an input message for processing
         TransactionDto transactionDto = TransactionDto.fromTransactionMessage(transaction, TransactionStatus.NEW);
 
         // Create an entry in the Transaction table with NEW status
         operator.createTransactionRecord(transactionDto);
 
+        // Create a new TransactionDto with appropriate attributes like status and construct a new message to send to Card service
         TransactionDto newTransactionDto = new TransactionDto();
         newTransactionDto.setTransactionId(transactionDto.getTransactionId());
         newTransactionDto.setSenderCardId(transactionDto.getSenderCardId());
@@ -76,7 +76,7 @@ public class TransactionService {
         // Mark a transaction as such that is waiting to be executed
         operator.updateTransactionStatus(transactionDto, TransactionStatus.PENDING);
 
-        // TODO: changed logic for amount and date
+        // Create a new TransactionDto with required appropriate attributes and construct a new message to send to Card service
         TransactionDto newTransactionDto = new TransactionDto();
         newTransactionDto.setTransactionId(transactionDto.getTransactionId());
         newTransactionDto.setSenderCardId(transactionDto.getSenderCardId());
@@ -104,7 +104,7 @@ public class TransactionService {
             operator.saveSuccessfulTransaction(transactionDto);
         }
 
-        // TODO: changed logic for amount and date
+        // Create a new TransactionDto with required appropriate attributes and construct a new message to send to Card service
         TransactionDto newTransactionDto = new TransactionDto();
         newTransactionDto.setTransactionId(transactionDto.getTransactionId());
         newTransactionDto.setSenderCardId(transactionDto.getSenderCardId());

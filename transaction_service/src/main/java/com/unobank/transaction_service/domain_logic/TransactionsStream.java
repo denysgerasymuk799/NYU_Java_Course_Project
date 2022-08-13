@@ -35,6 +35,7 @@ public class TransactionsStream {
 	@Bean
 	public KStream<String, String> kstreamProcessingTransactions(StreamsBuilder builder) {
 		Serde<String> stringSerde = Serdes.String();
+		// Read a source stream, filter it from nulls and generate a new stream with processed transactions
 		KStream<String, String> sourceStream = builder.stream(this.transactionsTopic, Consumed.with(stringSerde, stringSerde));
 		KStream<String, String> filteredStream = sourceStream.filter((k, v) -> v != null);
 		KStream<String, String> uppercaseStream = filteredStream.mapValues(this::processTransaction);
@@ -58,6 +59,7 @@ public class TransactionsStream {
 			System.out.println("transaction: " + transaction);
 			log.info("Start processing of a new transaction: [{}]. Event: {}.", transaction.getData().getTransactionId(), transaction.getEventName());
 
+			// Do event-based processing
 			ProcessingTransactionMessage messageForCardService;
 			if (transaction.getEventName().equals(Events.TRANSACTION_TOPUP.label)) {
 				messageForCardService = transactionService.createTopupTransaction(transaction);

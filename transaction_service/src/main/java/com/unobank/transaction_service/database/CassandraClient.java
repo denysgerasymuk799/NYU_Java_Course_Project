@@ -21,7 +21,7 @@ public class CassandraClient implements AutoCloseable {
     private InsertOptions insertOptions;
 
     public CassandraClient() throws NoSuchAlgorithmException {
-        // use Java-based bean metadata to register an instance of a com.datastax.oss.driver.api.core.CqlSession
+        // Use Java-based bean metadata to register an instance of a com.datastax.oss.driver.api.core.CqlSession
         cqlSession = new KeyspacesConfig().session();
         System.out.println("Cassandra session is initialized");
 

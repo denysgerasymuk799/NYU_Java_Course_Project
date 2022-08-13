@@ -38,7 +38,7 @@ public class TransactionServiceOperator {
     }
 
     public TransactionRecord getTransactionRecord(TransactionDto transaction) {
-        // TODO: check if this query really requires toUnixTimestamp(date)
+        // Create a record object from an entry in the database
         String query = String.format("SELECT transaction_id, card_id, receiver_card_id, amount, status, date " +
                 "FROM %s " +
                 "WHERE transaction_id = ?", transactionTable);
@@ -122,7 +122,6 @@ public class TransactionServiceOperator {
 
         assert receiverCardId != null;
         if (receiverCardId.equals(TransactionType.TOP_UP.toString())) {
-            // TODO: check if 'value' for date column is correct
             query = String.format("UPDATE %s " +
                             "SET status = '%s' " +
                             "WHERE card_id = '%s' AND date='%s' AND transaction_id = '%s'",
