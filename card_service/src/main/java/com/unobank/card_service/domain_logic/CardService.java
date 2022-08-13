@@ -26,7 +26,7 @@ public class CardService {
      * @param transaction: transaction parameters.
      * @return ProcessingTransactionMessage for TransactionService.
      */
-    public ProcessingTransactionMessage reserveBalance(TransactionMessage transaction) {
+    public ProcessingTransactionMessage reserveBalance(ProcessingTransactionMessage transaction) {
         TransactionDto transactionDto = TransactionDto.fromTransactionMessage(transaction, TransactionStatus.RESERVED);
 
         // Try reserve money
@@ -57,7 +57,7 @@ public class CardService {
      * @param transaction: transaction parameters.
      * @return ProcessingTransactionMessage for TransactionService.
      */
-    public ProcessingTransactionMessage processPayment(TransactionMessage transaction) {
+    public ProcessingTransactionMessage processPayment(ProcessingTransactionMessage transaction) {
         TransactionDto transactionDto = TransactionDto.fromTransactionMessage(transaction, TransactionStatus.COMPLETED);
         // Try execute transaction
         boolean responseStatus = operator.executeTransaction(transactionDto);
@@ -85,7 +85,7 @@ public class CardService {
      * @param transaction: transaction parameters.
      * @return ProcessingTransactionMessage for TransactionService.
      */
-    public ProcessingTransactionMessage cancelReservation(TransactionMessage transaction) {
+    public ProcessingTransactionMessage cancelReservation(ProcessingTransactionMessage transaction) {
         TransactionDto transactionDto = TransactionDto.fromTransactionMessage(transaction, TransactionStatus.CANCELLED);
         operator.cancelReservation(transactionDto);
 

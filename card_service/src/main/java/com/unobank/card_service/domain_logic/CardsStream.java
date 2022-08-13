@@ -37,7 +37,8 @@ public class CardsStream {
 	public KStream<String, String> kstreamProcessingTransactions(StreamsBuilder builder) {
 		Serde<String> stringSerde = Serdes.String();
 		KStream<String, String> sourceStream = builder.stream(this.cardsTopic, Consumed.with(stringSerde, stringSerde));
-		KStream<String, String> uppercaseStream = sourceStream.mapValues(this::processTransaction);
+		KStream<String, String> filteredStream = sourceStream.filter((k, v) -> v != null);
+		KStream<String, String> uppercaseStream = filteredStream.mapValues(this::processTransaction);
 
 		uppercaseStream.to(transactionsTopic);
 		sourceStream.print(Printed.<String, String>toSysOut().withLabel("JSON original stream"));
@@ -52,7 +53,7 @@ public class CardsStream {
 	 */
 	public String processTransaction(String message) {
 		try {
-			TransactionMessage transaction = inputObjectMapper.readValue(message, TransactionMessage.class);
+			ProcessingTransactionMessage transaction = inputObjectMapper.readValue(message, ProcessingTransactionMessage.class);
 			System.out.println("transaction: " + transaction);
 			log.info("Start processing of a new transaction: [{}]. Event: {}.", transaction.getData().getTransactionId(), transaction.getEventName());
 

@@ -9,7 +9,6 @@ import java.util.Date;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProcessingTransactionMessage {
-    Timestamp createTimestamp;
     String eventName;
     String messageType;
     int responseType;
@@ -18,17 +17,7 @@ public class ProcessingTransactionMessage {
     TransactionDto data;
     String status;
 
-    public String getTransactionId() {
-        return data.getTransactionId();
-    }
-
-    public String getSenderCardId() {
-        return data.getSenderCardId();
-    }
-
-    public String getReceiverCardId() {
-        return data.getReceiverCardId();
-    }
+    public ProcessingTransactionMessage() {}
 
     public ProcessingTransactionMessage(String eventName, String messageType, int responseType, String producer,
                                         String message, TransactionDto transactionDto) {

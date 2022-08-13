@@ -23,21 +23,22 @@ import com.unobank.transaction_service.dto.TransactionMessage;
 public class TransactionsStream {
 	@Autowired
 	private TransactionService transactionService;
-	private ObjectMapper inputObjectMapper = new ObjectMapper();
-	private ObjectMapper outputObjectMapper = new ObjectMapper();
-	private Dotenv dotenv = Dotenv
+	private final ObjectMapper inputObjectMapper = new ObjectMapper();
+	private final ObjectMapper outputObjectMapper = new ObjectMapper();
+	private final Dotenv dotenv = Dotenv
 			.configure()
 			.directory("./")
 			.load();
-	private String transactionsTopic = dotenv.get("TRANSACTIONS_TOPIC");
-	private String cardsTopic = dotenv.get("CARDS_TOPIC");
-	private String resultsTopic = dotenv.get("ALL_RESULTS_TOPIC");
+	private final String transactionsTopic = dotenv.get("TRANSACTIONS_TOPIC");
+	private final String cardsTopic = dotenv.get("CARDS_TOPIC");
+	private final String resultsTopic = dotenv.get("ALL_RESULTS_TOPIC");
 
 	@Bean
 	public KStream<String, String> kstreamProcessingTransactions(StreamsBuilder builder) {
 		Serde<String> stringSerde = Serdes.String();
 		KStream<String, String> sourceStream = builder.stream(this.transactionsTopic, Consumed.with(stringSerde, stringSerde));
-		KStream<String, String> uppercaseStream = sourceStream.mapValues(this::processTransaction);
+		KStream<String, String> filteredStream = sourceStream.filter((k, v) -> v != null);
+		KStream<String, String> uppercaseStream = filteredStream.mapValues(this::processTransaction);
 
 		uppercaseStream.to(cardsTopic);
 		sourceStream.print(Printed.<String, String>toSysOut().withLabel("JSON original stream"));
@@ -46,11 +47,15 @@ public class TransactionsStream {
 		return sourceStream;
 	}
 
+	/**
+	 * Process a message from TransactionService's topic and send a response to CardService's topic.
+	 * @param message: JSON in string format, which contains transaction info.
+	 */
 	public String processTransaction(String message) {
 		try {
-			TransactionMessage transaction = inputObjectMapper.readValue(message, TransactionMessage.class);
+			ProcessingTransactionMessage transaction = inputObjectMapper.readValue(message, ProcessingTransactionMessage.class);
 			System.out.println("transaction: " + transaction);
-			log.info("Start a new transaction: [{}]. Event: {}.", transaction.getData().getTransactionId(), transaction.getEventName());
+			log.info("Start processing of a new transaction: [{}]. Event: {}.", transaction.getData().getTransactionId(), transaction.getEventName());
 
 			ProcessingTransactionMessage messageForCardService;
 			if (transaction.getEventName().equals(Events.TRANSACTION_REQUEST.label)) {
@@ -65,7 +70,7 @@ public class TransactionsStream {
 			log.info("Completed the transaction: [{}]. Event: {}.", transaction.getData().getTransactionId(), transaction.getEventName());
 			return outputObjectMapper.writeValueAsString(messageForCardService);
 		} catch (Exception e) {
-			System.out.println(e.toString());
+			log.error(e.toString());
 			return "";
 		}
 	}

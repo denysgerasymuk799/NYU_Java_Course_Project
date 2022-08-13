@@ -5,6 +5,7 @@ import com.unobank.card_service.domain_logic.enums.TransactionStatus;
 import lombok.Data;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Data
@@ -16,16 +17,22 @@ public class TransactionDto {
     int amount;
     Timestamp createTimestamp;
     Date date;
-    TransactionStatus status;
+    String status;
 
-    public static TransactionDto fromTransactionMessage(TransactionMessage transactionMessage, TransactionStatus status) {
+    public String getFormattedDate() {
+        String pattern = "yyyy-MM-dd";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        return simpleDateFormat.format(this.date);
+    }
+
+    public static TransactionDto fromTransactionMessage(ProcessingTransactionMessage transactionMessage, TransactionStatus status) {
         TransactionDto transactionDto = new TransactionDto();
         transactionDto.setTransactionId(transactionMessage.getData().getTransactionId());
         transactionDto.setSenderCardId(transactionMessage.getData().getSenderCardId());
         transactionDto.setReceiverCardId(transactionMessage.getData().getReceiverCardId());
         transactionDto.setAmount(transactionMessage.getData().getAmount());
         transactionDto.setDate(transactionMessage.getData().getDate());
-        transactionDto.setStatus(status);
+        transactionDto.setStatus(status.toString());
 
         Date date = new Date();
         transactionDto.setCreateTimestamp(new Timestamp(date.getTime()));

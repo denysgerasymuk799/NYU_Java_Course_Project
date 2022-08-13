@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.cassandra.core.InsertOptions;
 import org.springframework.stereotype.Component;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.unobank.transaction_service.configs.KeyspacesConfig;
@@ -40,7 +41,7 @@ public class CassandraClient implements AutoCloseable {
         log.info("Query is executed.");
     }
 
-    public void insertOne(String query, String value) {
+    public void insertWithOneArg(String query, String value) {
         log.info("Executing the next query: {}", query);
         // Use a prepared query for quoting
         PreparedStatement prepared = cqlSession.prepare(query);
@@ -51,7 +52,7 @@ public class CassandraClient implements AutoCloseable {
         log.info("Query is executed.");
     }
 
-    public List<Row> selectOne(String query, String value) {
+    public List<Row> selectWithOneArg(String query, String value) {
         log.info("Executing the next query: {}", query);
         // Use a prepared query for quoting
         PreparedStatement prepared = cqlSession.prepare(query);
@@ -60,11 +61,26 @@ public class CassandraClient implements AutoCloseable {
         // of Row objects
         ResultSet rs = cqlSession.execute(prepared.bind(value));
         log.info("Query is executed, resultSet:");
+        List<Row> results = new ArrayList<>(rs.all());
         for (Row row : rs) {
-            System.out.println(row);
+            System.out.println(row.getFormattedContents());
+        }
+        return results;
+    }
+
+    public List<Row> selectQuery(String query) {
+        log.info("Executing the next query: {}", query);
+
+        // We use execute to send a query to Cassandra. This returns a ResultSet, which is essentially a collection
+        // of Row objects
+        ResultSet rs = cqlSession.execute(query);
+        List<Row> results = new ArrayList<>(rs.all());
+        log.info("Query is executed, resultSet:");
+        for (Row row : rs) {
+            System.out.println(row.getFormattedContents());
         }
 
-        return rs.all();
+        return results;
     }
 
     @Override

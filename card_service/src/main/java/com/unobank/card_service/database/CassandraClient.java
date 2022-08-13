@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.cassandra.core.InsertOptions;
 import org.springframework.stereotype.Component;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.unobank.card_service.configs.KeyspacesConfig;
@@ -59,12 +60,28 @@ public class CassandraClient implements AutoCloseable {
         // We use execute to send a query to Cassandra. This returns a ResultSet, which is essentially a collection
         // of Row objects
         ResultSet rs = cqlSession.execute(prepared.bind(value));
+        List<Row> results = new ArrayList<>(rs.all());
         log.info("Query is executed, resultSet:");
         for (Row row : rs) {
-            System.out.println(row);
+            System.out.println(row.getFormattedContents());
         }
 
-        return rs.all();
+        return results;
+    }
+
+    public List<Row> selectQuery(String query) {
+        log.info("Executing the next query: {}", query);
+
+        // We use execute to send a query to Cassandra. This returns a ResultSet, which is essentially a collection
+        // of Row objects
+        ResultSet rs = cqlSession.execute(query);
+        List<Row> results = new ArrayList<>(rs.all());
+        log.info("Query is executed, resultSet:");
+        for (Row row : rs) {
+            System.out.println(row.getFormattedContents());
+        }
+
+        return results;
     }
 
     @Override

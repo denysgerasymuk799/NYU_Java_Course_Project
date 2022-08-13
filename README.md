@@ -11,6 +11,7 @@
 
 * Use the following command to view messages from the topic in the console: `./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic TransactionService --from-beginning`
 
+* Delete topic: `kafka-topics.sh --bootstrap-server localhost:9092 --delete --topic first_topic`
 
 ## Content
 

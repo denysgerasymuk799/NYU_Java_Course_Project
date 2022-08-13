@@ -38,9 +38,7 @@ public class CardServiceOperator {
         // Get an amount of all reserved transactions
         String query = String.format("SELECT amount FROM %s WHERE card_id = ?", this.reservedTransactionTable);
         List<Row> results = cassandraClient.selectWithOneArg(query, transaction.getSenderCardId());
-        if (results.size() <= 0) {
-            return 0;
-        }
+
         int reservedAmount = 0;
         for (Row row : results) {
             reservedAmount += row.getInt("amount");
@@ -49,6 +47,7 @@ public class CardServiceOperator {
         // Get an available card credit limit
         query = String.format("SELECT credit_limit FROM %s WHERE card_id = ?", this.cardTable);
         results = cassandraClient.selectWithOneArg(query, transaction.getSenderCardId());
+        System.out.println("results.size(): " + results.size());
         int creditLimit = results.get(0).getInt("credit_limit");
         // Available limit = Current credit limit - SUM(reserved transactions)
         return creditLimit - reservedAmount;
@@ -64,12 +63,12 @@ public class CardServiceOperator {
         String query = String.format("INSERT INTO %s (transaction_id, card_id, receiver_card_id, amount, date) " +
                         "VALUES ('%s', '%s', '%s', %d, '%s')",
                 this.reservedTransactionTable, transaction.getTransactionId(), transaction.getSenderCardId(),
-                transaction.getReceiverCardId(), transaction.getAmount(), transaction.getDate());
+                transaction.getReceiverCardId(), transaction.getAmount(), transaction.getFormattedDate());
         cassandraClient.executeInsertQuery(query);
 
         query = String.format("SELECT transaction_id FROM %s " +
-                "WHERE card_id = '%s' AND transaction_id = '%s'",
-                this.reservedTransactionTable, transaction.getSenderCardId(), transaction.getTransactionId());
+                "WHERE card_id = ? AND transaction_id = '%s'",
+                this.reservedTransactionTable, transaction.getTransactionId());
         List<Row> results = cassandraClient.selectWithOneArg(query, transaction.getSenderCardId());
         if (results.size() <= 0) {
             return null;
@@ -83,7 +82,7 @@ public class CardServiceOperator {
                         "FROM %s " +
                         "WHERE card_id = '%s' AND transaction_id = '%s'",
                 this.reservedTransactionTable, transactionInfo.getSenderCardId(), transactionInfo.getTransactionId());
-        List<Row> results = cassandraClient.selectWithOneArg(query, transactionInfo.getSenderCardId());
+        List<Row> results = cassandraClient.selectQuery(query);
         if (results.size() <= 0) {
             return false;
         }
@@ -98,7 +97,7 @@ public class CardServiceOperator {
         // Get cardholder current credit limit to carry operation on
         query = String.format("SELECT credit_limit FROM %s WHERE card_id = '%s'",
                 this.cardTable, transaction.getSenderCardId());
-        results = cassandraClient.selectWithOneArg(query, transactionInfo.getSenderCardId());
+        results = cassandraClient.selectQuery(query);
         if (results.size() <= 0) {
             return false;
         }
@@ -107,7 +106,7 @@ public class CardServiceOperator {
         // Get receiver current credit limit
         query = String.format("SELECT credit_limit FROM %s WHERE card_id = '%s'",
                 this.cardTable, transaction.getReceiverCardId());
-        results = cassandraClient.selectWithOneArg(query, transactionInfo.getSenderCardId());
+        results = cassandraClient.selectQuery(query);
         if (results.size() <= 0) {
             return false;
         }
@@ -116,13 +115,13 @@ public class CardServiceOperator {
         // Withdraw money from the cardholder card.
         // Deposit money to the receiver card.
         query = String.format("UPDATE %s " +
-                        "SET credit_limit = %d" +
+                        "SET credit_limit = %d " +
                         "WHERE card_id = '%s'",
                 this.cardTable, cardholderCreditLimit - transaction.getAmount(), transaction.getSenderCardId());
         cassandraClient.executeInsertQuery(query);
 
         query = String.format("UPDATE %s " +
-                        "SET credit_limit = %d" +
+                        "SET credit_limit = %d " +
                         "WHERE card_id = '%s'",
                 this.cardTable, receiverCreditLimit + transaction.getAmount(), transaction.getReceiverCardId());
         cassandraClient.executeInsertQuery(query);

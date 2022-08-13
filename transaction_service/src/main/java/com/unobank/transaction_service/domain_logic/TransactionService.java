@@ -26,7 +26,7 @@ public class TransactionService {
      * @param transaction: transaction parameters.
      * @return ProcessingTransactionMessage for CardService.
      */
-    public ProcessingTransactionMessage createTransaction(TransactionMessage transaction) {
+    public ProcessingTransactionMessage createTransaction(ProcessingTransactionMessage transaction) {
         TransactionDto transactionDto = TransactionDto.fromTransactionMessage(transaction, TransactionStatus.NEW);
 
         // Create an entry in the Transaction table with NEW status
@@ -42,7 +42,7 @@ public class TransactionService {
      * @param transaction: transaction parameters.
      * @return ProcessingTransactionMessage for CardService.
      */
-    public ProcessingTransactionMessage executeTransaction(TransactionMessage transaction) {
+    public ProcessingTransactionMessage executeTransaction(ProcessingTransactionMessage transaction) {
         // Get a transaction record
         TransactionDto transactionDto = TransactionDto.fromTransactionMessage(transaction, TransactionStatus.PENDING);
         TransactionRecord record = operator.getTransactionRecord(transactionDto);
@@ -68,7 +68,7 @@ public class TransactionService {
      * @param transaction: transaction parameters.
      * @return ProcessingTransactionMessage for CardService.
      */
-    public ProcessingTransactionMessage sendTransactionResult(TransactionMessage transaction) {
+    public ProcessingTransactionMessage sendTransactionResult(ProcessingTransactionMessage transaction) {
         // Get transaction record
         TransactionDto transactionDto = TransactionDto.fromTransactionMessage(transaction, TransactionStatus.PENDING);
         TransactionRecord record = operator.getTransactionRecord(transactionDto);
@@ -87,7 +87,7 @@ public class TransactionService {
                         ? TransactionType.TOP_UP.toString() : transactionDto.getReceiverCardId());
         newTransactionDto.setAmount(record.getAmount());
         newTransactionDto.setDate(record.getDate());
-        newTransactionDto.setStatus((record.getStatus() == TransactionStatus.COMPLETED) ? TransactionStatus.COMPLETED : TransactionStatus.FAILED);
+        newTransactionDto.setStatus((record.getStatus() == TransactionStatus.COMPLETED) ? TransactionStatus.COMPLETED.toString() : TransactionStatus.FAILED.toString());
 
         return new ProcessingTransactionMessage(
                 Events.TRANSACTION_COMPLETED.label, Constants.MESSAGE_TYPE_REQUEST, Constants.RESPONSE_SUCCESS,
@@ -100,7 +100,7 @@ public class TransactionService {
      * @param status: transaction current status.
      * @return ProcessingTransactionMessage for CardService.
      */
-    public ProcessingTransactionMessage setTransactionCompletionStatus(TransactionMessage transaction, TransactionStatus status) {
+    public ProcessingTransactionMessage setTransactionCompletionStatus(ProcessingTransactionMessage transaction, TransactionStatus status) {
         TransactionDto transactionDto = TransactionDto.fromTransactionMessage(transaction, TransactionStatus.PENDING);
         operator.updateTransactionStatus(transactionDto, status);
 

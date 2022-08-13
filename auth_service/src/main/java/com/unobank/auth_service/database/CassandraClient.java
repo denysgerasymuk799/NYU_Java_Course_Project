@@ -30,7 +30,7 @@ public class CassandraClient implements AutoCloseable {
                 build();
     }
 
-    public void insertOne(String query, String value) {
+    public void insertWithOneArg(String query, String value) {
         log.info("Executing the next query: {}", query);
         // Use a prepared query for quoting
         PreparedStatement prepared = cqlSession.prepare(query);
@@ -39,9 +39,6 @@ public class CassandraClient implements AutoCloseable {
         // of Row objects.
         ResultSet rs = cqlSession.execute(prepared.bind(value));
         log.info("Query is executed, resultSet:");
-        for (Row row : rs) {
-            System.out.println(row);
-        }
     }
 
     @Override

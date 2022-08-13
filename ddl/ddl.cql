@@ -24,6 +24,17 @@ CREATE TABLE web_banking.transactions (
 	PRIMARY KEY ((transaction_id), card_id, date) 
 ) WITH CLUSTERING ORDER BY (card_id ASC, date DESC);
 
+CREATE TABLE web_banking.transactions_by_card (
+	transaction_id TEXT,
+	card_id TEXT,
+	sender_card_id TEXT,
+	receiver_card_id TEXT,
+	amount INT,
+	status TEXT,
+	date DATE,
+	PRIMARY KEY ((card_id), date, transaction_id) 
+) WITH CLUSTERING ORDER BY (date DESC, transaction_id ASC);
+
 CREATE TABLE web_banking.reserved_transactions (
 	transaction_id TEXT,
 	card_id TEXT,

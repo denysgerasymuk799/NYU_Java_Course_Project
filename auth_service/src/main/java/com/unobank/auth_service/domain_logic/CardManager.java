@@ -64,10 +64,10 @@ public class CardManager {
     public String assignCard() throws InvalidQueryException {
         String cardId = Objects.requireNonNull(allocateCard()).getCardId();
         String query = String.format("INSERT INTO %s (card_id, credit_limit) VALUES (?, 500)", cardTable);
-        cassandraClient.insertOne(query, cardId);
+        cassandraClient.insertWithOneArg(query, cardId);
 
         query = String.format("INSERT INTO %s (card_id, date) VALUES (?, '%s');", unique_users_daily, getCurrentDate());
-        cassandraClient.insertOne(query, cardId);
+        cassandraClient.insertWithOneArg(query, cardId);
 
         return cardId;
     }

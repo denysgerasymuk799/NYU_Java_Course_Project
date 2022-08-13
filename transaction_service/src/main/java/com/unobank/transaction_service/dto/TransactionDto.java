@@ -17,16 +17,16 @@ public class TransactionDto {
     int amount;
     Timestamp createTimestamp;
     Date date;
-    TransactionStatus status;
+    String status;
 
-    public static TransactionDto fromTransactionMessage(TransactionMessage transactionMessage, TransactionStatus status) {
+    public static TransactionDto fromTransactionMessage(ProcessingTransactionMessage transactionMessage, TransactionStatus status) {
         TransactionDto transactionDto = new TransactionDto();
         transactionDto.setTransactionId(transactionMessage.getData().getTransactionId());
         transactionDto.setSenderCardId(transactionMessage.getData().getSenderCardId());
         transactionDto.setReceiverCardId(transactionMessage.getData().getReceiverCardId());
         transactionDto.setAmount(transactionMessage.getData().getAmount());
         transactionDto.setDate(transactionMessage.getData().getDate());
-        transactionDto.setStatus(status);
+        transactionDto.setStatus(status.toString());
 
         Date date = new Date();
         transactionDto.setCreateTimestamp(new Timestamp(date.getTime()));
