@@ -43,7 +43,7 @@ public class TransactionHandler {
             return "Input fields are in an incorrect format. Error messages: " + errMessages;
         }
 
-        if (userDetails.get("cardId").equals(transactionRequest.getSenderCardId())) {
+        if (! userDetails.get("cardId").equals(transactionRequest.getSenderCardId())) {
             return "Authorized user card id is not equal to sender card id in the request body.";
         }
 

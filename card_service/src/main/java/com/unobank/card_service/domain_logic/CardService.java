@@ -22,6 +22,35 @@ public class CardService {
     // TODO: add create_topup_transaction()
 
     /**
+     * Top up card balance for specified receiverCardId.
+     * @param transaction: transaction parameters.
+     * @return ProcessingTransactionMessage for TransactionService.
+     */
+    public ProcessingTransactionMessage createTopupTransaction(ProcessingTransactionMessage transaction) {
+        TransactionDto transactionDto = TransactionDto.fromTransactionMessage(transaction, TransactionStatus.COMPLETED);
+
+        // Top up the balance from the db side
+        boolean operationStatus = operator.topupBalance(transactionDto);
+        String eventName, message;
+        if (!operationStatus) {
+            eventName = Events.TRANSACTION_FAILURE.label;
+            message = "Couldn't top up card balance.";
+        } else {
+            eventName = Events.TRANSACTION_SUCCESS.label;
+            message = "Card balance updated.";
+        }
+
+        // Send a response to a TransactionService
+        TransactionDto newTransactionDto = new TransactionDto();
+        newTransactionDto.setTransactionId(transactionDto.getTransactionId());
+        newTransactionDto.setSenderCardId(transactionDto.getSenderCardId());
+        log.info("Transaction: [{}]. Status: {}", transaction.getData().getTransactionId(), TransactionStatus.COMPLETED);
+        return new ProcessingTransactionMessage(
+                eventName, Constants.MESSAGE_TYPE_RESPONSE, Constants.RESPONSE_SUCCESS,
+                Constants.CARD_SERVICE_PRODUCER_NAME, message, transactionDto);
+    }
+
+    /**
      * Reserve card balance for the newly created transaction.
      * @param transaction: transaction parameters.
      * @return ProcessingTransactionMessage for TransactionService.

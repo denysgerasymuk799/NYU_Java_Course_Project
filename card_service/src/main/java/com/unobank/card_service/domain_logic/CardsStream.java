@@ -1,5 +1,6 @@
 package com.unobank.card_service.domain_logic;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unobank.card_service.domain_logic.enums.TransactionStatus;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -61,7 +62,9 @@ public class CardsStream {
 
 			// Do event-based processing
 			ProcessingTransactionMessage messageForTransactionService = null;
-			if (transaction.getEventName().equals(Events.TRANSACTION_CREATED.label)) {
+			if (transaction.getEventName().equals(Events.TRANSACTION_TOPUP.label)) {
+				messageForTransactionService = cardService.createTopupTransaction(transaction);
+			} else if (transaction.getEventName().equals(Events.TRANSACTION_CREATED.label)) {
 				messageForTransactionService = cardService.reserveBalance(transaction);
 			} else if (transaction.getEventName().equals(Events.TRANSACTION_PENDING.label)) {
 				messageForTransactionService = cardService.processPayment(transaction);
@@ -75,7 +78,17 @@ public class CardsStream {
 			return null;
 		} catch (Exception e) {
 			log.error(e.toString());
-			return null;
+			String responseMessage = "ERROR: " + e.toString() + ".\n Input message is " + message;
+			ProcessingTransactionMessage messageForTransactionService = new ProcessingTransactionMessage(
+				Events.TRANSACTION_FAILURE.label, Constants.MESSAGE_TYPE_RESPONSE, Constants.RESPONSE_FAILED,
+				Constants.CARD_SERVICE_PRODUCER_NAME, responseMessage, null);
+
+			try {
+				return outputObjectMapper.writeValueAsString(messageForTransactionService);
+			} catch (JsonProcessingException err) {
+				log.error(err.toString());
+				return null;
+			}
 		}
 	}
 }

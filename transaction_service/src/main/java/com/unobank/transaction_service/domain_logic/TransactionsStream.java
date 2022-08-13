@@ -59,7 +59,9 @@ public class TransactionsStream {
 			log.info("Start processing of a new transaction: [{}]. Event: {}.", transaction.getData().getTransactionId(), transaction.getEventName());
 
 			ProcessingTransactionMessage messageForCardService;
-			if (transaction.getEventName().equals(Events.TRANSACTION_REQUEST.label)) {
+			if (transaction.getEventName().equals(Events.TRANSACTION_TOPUP.label)) {
+				messageForCardService = transactionService.createTopupTransaction(transaction);
+			} else if (transaction.getEventName().equals(Events.TRANSACTION_REQUEST.label)) {
 				messageForCardService = transactionService.createTransaction(transaction);
 			} else if (transaction.getEventName().equals(Events.RESERVATION_SUCCESS.label)) {
 				messageForCardService = transactionService.executeTransaction(transaction);

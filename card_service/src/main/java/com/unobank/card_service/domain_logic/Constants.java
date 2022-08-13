@@ -14,6 +14,7 @@ public final class Constants {
 
     // ------------- Message Body Variables --------------
     public static final int RESPONSE_SUCCESS = 200;
+    public static final int RESPONSE_FAILED = 404;
     public static final String MESSAGE_TYPE_RESPONSE = "Response";
     public static final String MESSAGE_TYPE_REQUEST = "Request";
     public static final String TRANSACTION_NEW_STATUS = "NEW";
