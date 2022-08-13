@@ -39,8 +39,10 @@ public class CardsStream {
 		KStream<String, String> sourceStream = builder.stream(this.cardsTopic, Consumed.with(stringSerde, stringSerde));
 		KStream<String, String> filteredStream = sourceStream.filter((k, v) -> v != null);
 		KStream<String, String> uppercaseStream = filteredStream.mapValues(this::processTransaction);
+		// Filter nulls in case of errors
+		KStream<String, String> resultFilteredStream = uppercaseStream.filter((k, v) -> v != null);
 
-		uppercaseStream.to(transactionsTopic);
+		resultFilteredStream.to(transactionsTopic);
 		sourceStream.print(Printed.<String, String>toSysOut().withLabel("JSON original stream"));
 		uppercaseStream.print(Printed.<String, String>toSysOut().withLabel("JSON processTransaction stream"));
 
@@ -73,7 +75,7 @@ public class CardsStream {
 			return null;
 		} catch (Exception e) {
 			log.error(e.toString());
-			return "";
+			return null;
 		}
 	}
 }

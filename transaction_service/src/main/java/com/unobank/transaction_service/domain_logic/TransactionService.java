@@ -4,14 +4,13 @@ import com.unobank.transaction_service.database.models.TransactionRecord;
 import com.unobank.transaction_service.domain_logic.enums.TransactionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import com.unobank.transaction_service.database.TransactionServiceOperator;
 import com.unobank.transaction_service.domain_logic.enums.Events;
 import com.unobank.transaction_service.domain_logic.enums.TransactionStatus;
 import com.unobank.transaction_service.dto.ProcessingTransactionMessage;
 import com.unobank.transaction_service.dto.TransactionDto;
-import com.unobank.transaction_service.dto.TransactionMessage;
-import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -34,7 +33,7 @@ public class TransactionService {
         log.info("Transaction: [{}]. Status: {}.", transaction.getData().getTransactionId(), TransactionStatus.NEW);
         return new ProcessingTransactionMessage(
                 Events.TRANSACTION_CREATED.label, Constants.MESSAGE_TYPE_REQUEST, Constants.RESPONSE_SUCCESS,
-                Constants.TRANSACTION_SERVICE_PRODUCER_NAME, "", transactionDto);
+                Constants.TRANSACTION_SERVICE_PRODUCER_NAME, "Transaction status is NEW", transactionDto);
     }
 
     /**
@@ -60,7 +59,7 @@ public class TransactionService {
         log.info("Transaction: [{}]. Status: {}.", record.getTransactionId(), TransactionStatus.PENDING);
         return new ProcessingTransactionMessage(
                 Events.TRANSACTION_PENDING.label, Constants.MESSAGE_TYPE_REQUEST, Constants.RESPONSE_SUCCESS,
-                Constants.TRANSACTION_SERVICE_PRODUCER_NAME, "", newTransactionDto);
+                Constants.TRANSACTION_SERVICE_PRODUCER_NAME, "Transaction is pending", newTransactionDto);
     }
 
     /**
@@ -70,7 +69,7 @@ public class TransactionService {
      */
     public ProcessingTransactionMessage sendTransactionResult(ProcessingTransactionMessage transaction) {
         // Get transaction record
-        TransactionDto transactionDto = TransactionDto.fromTransactionMessage(transaction, TransactionStatus.PENDING);
+        TransactionDto transactionDto = TransactionDto.fromTransactionMessage(transaction, TransactionStatus.COMPLETED);
         TransactionRecord record = operator.getTransactionRecord(transactionDto);
 
         // Save transaction record in successful transaction table in case transaction is successful
@@ -87,11 +86,18 @@ public class TransactionService {
                         ? TransactionType.TOP_UP.toString() : transactionDto.getReceiverCardId());
         newTransactionDto.setAmount(record.getAmount());
         newTransactionDto.setDate(record.getDate());
-        newTransactionDto.setStatus((record.getStatus() == TransactionStatus.COMPLETED) ? TransactionStatus.COMPLETED.toString() : TransactionStatus.FAILED.toString());
 
+        String message;
+        if (record.getStatus() == TransactionStatus.COMPLETED) {
+            newTransactionDto.setStatus(TransactionStatus.COMPLETED.toString());
+            message = "Transaction is successful";
+        } else {
+            newTransactionDto.setStatus(TransactionStatus.FAILED.toString());
+            message = transaction.getMessage();
+        }
         return new ProcessingTransactionMessage(
                 Events.TRANSACTION_COMPLETED.label, Constants.MESSAGE_TYPE_REQUEST, Constants.RESPONSE_SUCCESS,
-                Constants.TRANSACTION_SERVICE_PRODUCER_NAME, "", newTransactionDto);
+                Constants.TRANSACTION_SERVICE_PRODUCER_NAME, message, newTransactionDto);
     }
 
     /**

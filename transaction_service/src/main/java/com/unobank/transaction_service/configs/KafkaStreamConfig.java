@@ -26,7 +26,10 @@ public class KafkaStreamConfig {
 		props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
 		props.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, "3000");
 		props.put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE_V2);
+
 		props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
+		props.put(ProducerConfig.RETRIES_CONFIG, 2);
+
 		props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
 		props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
 

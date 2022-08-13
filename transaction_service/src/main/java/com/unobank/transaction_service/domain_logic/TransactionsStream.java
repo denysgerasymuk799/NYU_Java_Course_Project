@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Configuration;
 
 import com.unobank.transaction_service.domain_logic.enums.Events;
 import com.unobank.transaction_service.dto.ProcessingTransactionMessage;
-import com.unobank.transaction_service.dto.TransactionMessage;
 
 @Slf4j
 @Configuration
@@ -39,8 +38,10 @@ public class TransactionsStream {
 		KStream<String, String> sourceStream = builder.stream(this.transactionsTopic, Consumed.with(stringSerde, stringSerde));
 		KStream<String, String> filteredStream = sourceStream.filter((k, v) -> v != null);
 		KStream<String, String> uppercaseStream = filteredStream.mapValues(this::processTransaction);
+		// Filter nulls in case of errors
+		KStream<String, String> resultFilteredStream = uppercaseStream.filter((k, v) -> v != null);
 
-		uppercaseStream.to(cardsTopic);
+		resultFilteredStream.to(cardsTopic);
 		sourceStream.print(Printed.<String, String>toSysOut().withLabel("JSON original stream"));
 		uppercaseStream.print(Printed.<String, String>toSysOut().withLabel("JSON processTransaction stream"));
 
@@ -71,7 +72,7 @@ public class TransactionsStream {
 			return outputObjectMapper.writeValueAsString(messageForCardService);
 		} catch (Exception e) {
 			log.error(e.toString());
-			return "";
+			return null;
 		}
 	}
 }
