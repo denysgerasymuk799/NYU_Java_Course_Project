@@ -12,13 +12,13 @@ public class TransactionInfo {
     String senderCardId;
     String receiverCardId;
     int amount;
-    Timestamp createTimestamp;
+    String createTimestamp;
     Date date;
 
     public TransactionInfo() {}
 
     public TransactionInfo(String transactionId, String senderCardId, String receiverCardId,
-                           int amount, Timestamp createTimestamp) {
+                           int amount, String createTimestamp) {
         this.transactionId = transactionId;
         this.senderCardId = senderCardId;
         this.receiverCardId = receiverCardId;

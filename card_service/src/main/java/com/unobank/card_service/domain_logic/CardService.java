@@ -39,7 +39,7 @@ public class CardService {
             message = "Operation success.";
         } else {
             eventName = Events.RESERVATION_FAILURE.label;
-            message = "WalletServiceError: Unable to execute current operation. Not enough balance.";
+            message = "CardServiceError: Unable to execute current operation. Not enough balance.";
         }
 
         // Send a response to a TransactionService
@@ -67,7 +67,7 @@ public class CardService {
             message = "Operation success.";
         } else {
             eventName = Events.TRANSACTION_FAILURE.label;
-            message = "WalletServiceError: Failed to execute transaction.";
+            message = "CardServiceError: Failed to execute transaction.";
         }
 
         // Send a response to a TransactionService

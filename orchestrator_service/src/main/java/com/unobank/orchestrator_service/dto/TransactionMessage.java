@@ -2,6 +2,7 @@ package com.unobank.orchestrator_service.dto;
 
 import com.unobank.orchestrator_service.payload.request.TransactionRequest;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import lombok.Data;
 
@@ -23,6 +24,6 @@ public class TransactionMessage {
 
         Date date = new Date();
         this.data = new TransactionInfo(transactionId, request.getSenderCardId(), request.getReceiverCardId(),
-                request.getAmount(), new Timestamp(date.getTime()), date);
+                request.getAmount(), new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(new Date()), date);
     }
 }

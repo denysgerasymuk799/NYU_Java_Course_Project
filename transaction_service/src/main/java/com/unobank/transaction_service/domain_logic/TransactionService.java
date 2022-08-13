@@ -21,6 +21,33 @@ public class TransactionService {
     // TODO: add create_topup_transaction()
 
     /**
+     * Create balance top up transaction record in the database.
+     * Notify card service to top up balance for the current transaction.
+     * @param transaction: transaction parameters.
+     * @return ProcessingTransactionMessage for CardService.
+     */
+    public ProcessingTransactionMessage createTopupTransaction(ProcessingTransactionMessage transaction) {
+        TransactionDto transactionDto = TransactionDto.fromTransactionMessage(transaction, TransactionStatus.NEW);
+
+        // Create an entry in the Transaction table with NEW status
+        operator.createTransactionRecord(transactionDto);
+
+        TransactionDto newTransactionDto = new TransactionDto();
+        newTransactionDto.setTransactionId(transactionDto.getTransactionId());
+        newTransactionDto.setSenderCardId(transactionDto.getSenderCardId());
+        newTransactionDto.setReceiverCardId(TransactionType.TOP_UP.toString());
+        newTransactionDto.setAmount(transactionDto.getAmount());
+        newTransactionDto.setStatus(TransactionStatus.NEW.toString());
+        newTransactionDto.setCreateTimestamp(transactionDto.getCreateTimestamp());
+        newTransactionDto.setDate(transactionDto.getDate());
+
+        log.info("Transaction: [{}]. Status: {}.", transaction.getData().getTransactionId(), TransactionStatus.NEW);
+        return new ProcessingTransactionMessage(
+                Events.TRANSACTION_TOPUP.label, Constants.MESSAGE_TYPE_REQUEST, Constants.RESPONSE_SUCCESS,
+                Constants.TRANSACTION_SERVICE_PRODUCER_NAME, "Transaction status is NEW", transactionDto);
+    }
+
+    /**
      * Create transaction record in the database. Notify card service to reserve balance for the current transaction.
      * @param transaction: transaction parameters.
      * @return ProcessingTransactionMessage for CardService.

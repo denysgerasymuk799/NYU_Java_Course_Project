@@ -3,7 +3,6 @@ package com.unobank.card_service.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
-import java.sql.Timestamp;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)

@@ -15,7 +15,7 @@ public class TransactionDto {
     String senderCardId;
     String receiverCardId;
     int amount;
-    Timestamp createTimestamp;
+    String createTimestamp;
     Date date;
     String status;
 
@@ -33,9 +33,7 @@ public class TransactionDto {
         transactionDto.setAmount(transactionMessage.getData().getAmount());
         transactionDto.setDate(transactionMessage.getData().getDate());
         transactionDto.setStatus(status.toString());
-
-        Date date = new Date();
-        transactionDto.setCreateTimestamp(new Timestamp(date.getTime()));
+        transactionDto.setCreateTimestamp(new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(new Date()));
 
         return transactionDto;
     }
