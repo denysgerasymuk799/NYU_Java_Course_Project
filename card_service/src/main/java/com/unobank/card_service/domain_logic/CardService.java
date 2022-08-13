@@ -1,7 +1,5 @@
 package com.unobank.card_service.domain_logic;
 
-import com.unobank.card_service.database.models.TransactionRecord;
-import com.unobank.card_service.domain_logic.enums.TransactionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import lombok.extern.slf4j.Slf4j;
 
@@ -10,7 +8,6 @@ import com.unobank.card_service.domain_logic.enums.Events;
 import com.unobank.card_service.domain_logic.enums.TransactionStatus;
 import com.unobank.card_service.dto.ProcessingTransactionMessage;
 import com.unobank.card_service.dto.TransactionDto;
-import com.unobank.card_service.dto.TransactionMessage;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -18,8 +15,6 @@ import org.springframework.stereotype.Service;
 public class CardService {
     @Autowired
     private CardServiceOperator operator;
-
-    // TODO: add create_topup_transaction()
 
     /**
      * Top up card balance for specified receiverCardId.

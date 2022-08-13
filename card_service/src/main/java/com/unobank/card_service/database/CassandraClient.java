@@ -17,11 +17,11 @@ import com.unobank.card_service.configs.KeyspacesConfig;
 @Component
 @Slf4j
 public class CassandraClient implements AutoCloseable {
-    private CqlSession cqlSession;
-    private InsertOptions insertOptions;
+    private final CqlSession cqlSession;
+    private final InsertOptions insertOptions;
 
     public CassandraClient() throws NoSuchAlgorithmException {
-        // use Java-based bean metadata to register an instance of a com.datastax.oss.driver.api.core.CqlSession
+        // Use Java-based bean metadata to register an instance of a com.datastax.oss.driver.api.core.CqlSession
         cqlSession = new KeyspacesConfig().session();
         System.out.println("Cassandra session is initialized");
 

@@ -2,7 +2,6 @@ package com.unobank.card_service.domain_logic;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.unobank.card_service.domain_logic.enums.TransactionStatus;
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Serde;
@@ -17,7 +16,6 @@ import org.springframework.context.annotation.Configuration;
 
 import com.unobank.card_service.domain_logic.enums.Events;
 import com.unobank.card_service.dto.ProcessingTransactionMessage;
-import com.unobank.card_service.dto.TransactionMessage;
 
 @Slf4j
 @Configuration
@@ -37,6 +35,7 @@ public class CardsStream {
 	@Bean
 	public KStream<String, String> kstreamProcessingTransactions(StreamsBuilder builder) {
 		Serde<String> stringSerde = Serdes.String();
+		// Read a source stream, filter it from nulls and generate a new stream with processed transactions
 		KStream<String, String> sourceStream = builder.stream(this.cardsTopic, Consumed.with(stringSerde, stringSerde));
 		KStream<String, String> filteredStream = sourceStream.filter((k, v) -> v != null);
 		KStream<String, String> uppercaseStream = filteredStream.mapValues(this::processTransaction);
@@ -79,6 +78,7 @@ public class CardsStream {
 		} catch (Exception e) {
 			log.error(e.toString());
 			String responseMessage = "ERROR: " + e.toString() + ".\n Input message is " + message;
+			// Send the error to Transaction service
 			ProcessingTransactionMessage messageForTransactionService = new ProcessingTransactionMessage(
 				Events.TRANSACTION_FAILURE.label, Constants.MESSAGE_TYPE_RESPONSE, Constants.RESPONSE_FAILED,
 				Constants.CARD_SERVICE_PRODUCER_NAME, responseMessage, null);
