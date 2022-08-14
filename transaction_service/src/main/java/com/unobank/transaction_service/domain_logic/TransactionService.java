@@ -44,7 +44,7 @@ public class TransactionService {
         log.info("Transaction: [{}]. Status: {}.", transaction.getData().getTransactionId(), TransactionStatus.NEW);
         return new ProcessingTransactionMessage(
                 Events.TRANSACTION_TOPUP.label, Constants.MESSAGE_TYPE_REQUEST, Constants.RESPONSE_SUCCESS,
-                Constants.TRANSACTION_SERVICE_PRODUCER_NAME, "Transaction status is NEW", transactionDto);
+                Constants.TRANSACTION_SERVICE_PRODUCER_NAME, "Transaction status is NEW", newTransactionDto);
     }
 
     /**
@@ -78,8 +78,10 @@ public class TransactionService {
 
         // Create a new TransactionDto with required appropriate attributes and construct a new message to send to Card service
         TransactionDto newTransactionDto = new TransactionDto();
+        newTransactionDto.setCreateTimestamp(transactionDto.getCreateTimestamp());
         newTransactionDto.setTransactionId(transactionDto.getTransactionId());
         newTransactionDto.setSenderCardId(transactionDto.getSenderCardId());
+        newTransactionDto.setReceiverCardId(transactionDto.getReceiverCardId());
         newTransactionDto.setAmount(record.getAmount());
         newTransactionDto.setDate(record.getDate());
 
@@ -98,6 +100,7 @@ public class TransactionService {
         // Get transaction record
         TransactionDto transactionDto = TransactionDto.fromTransactionMessage(transaction, TransactionStatus.COMPLETED);
         TransactionRecord record = operator.getTransactionRecord(transactionDto);
+        System.out.println("record: " + record);
 
         // Save transaction record in successful transaction table in case transaction is successful
         if (record.getStatus() == TransactionStatus.COMPLETED) {
@@ -106,6 +109,7 @@ public class TransactionService {
 
         // Create a new TransactionDto with required appropriate attributes and construct a new message to send to Card service
         TransactionDto newTransactionDto = new TransactionDto();
+        newTransactionDto.setCreateTimestamp(transactionDto.getCreateTimestamp());
         newTransactionDto.setTransactionId(transactionDto.getTransactionId());
         newTransactionDto.setSenderCardId(transactionDto.getSenderCardId());
         newTransactionDto.setReceiverCardId(
@@ -134,7 +138,7 @@ public class TransactionService {
      * @return ProcessingTransactionMessage for CardService.
      */
     public ProcessingTransactionMessage setTransactionCompletionStatus(ProcessingTransactionMessage transaction, TransactionStatus status) {
-        TransactionDto transactionDto = TransactionDto.fromTransactionMessage(transaction, TransactionStatus.PENDING);
+        TransactionDto transactionDto = TransactionDto.fromTransactionMessage(transaction, status);
         operator.updateTransactionStatus(transactionDto, status);
 
         ProcessingTransactionMessage message = this.sendTransactionResult(transaction);

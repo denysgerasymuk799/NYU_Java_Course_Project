@@ -56,7 +56,7 @@ public class TransactionHandler {
         } else {
             eventName = Events.TRANSACTION_REQUEST.label;
         }
-
+        
         producer.processTransaction(new TransactionMessage(eventName, Constants.MESSAGE_TYPE_REQUEST, Constants.RESPONSE_SUCCESS,
                 "", transactionId, transactionRequest));
         return null;

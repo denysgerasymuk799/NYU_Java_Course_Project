@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -30,7 +31,7 @@ public class CardServiceOperator {
 
     public boolean topupBalance(TransactionDto transaction) {
         // Validate user input parameters to prevent SQL injections
-        if ((! Utils.isNumeric(transaction.getReceiverCardId())) || (transaction.getAmount() <= 0)) {
+        if ((! Utils.isNumeric(transaction.getSenderCardId())) || (transaction.getAmount() <= 0)) {
             return false;
         }
         // Get cardholder current credit limit to carry operation on
@@ -80,7 +81,7 @@ public class CardServiceOperator {
         String query = String.format("INSERT INTO %s (transaction_id, card_id, receiver_card_id, amount, date) " +
                         "VALUES ('%s', '%s', '%s', %d, '%s')",
                 this.reservedTransactionTable, transaction.getTransactionId(), transaction.getSenderCardId(),
-                transaction.getReceiverCardId(), transaction.getAmount(), transaction.getFormattedDate());
+                transaction.getReceiverCardId(), transaction.getAmount(), transaction.getDate());
         cassandraClient.executeInsertQuery(query);
 
         // Select an inserted transaction, check that it exists and return its transactionId
@@ -101,6 +102,7 @@ public class CardServiceOperator {
                         "WHERE card_id = '%s' AND transaction_id = '%s'",
                 this.reservedTransactionTable, transactionInfo.getSenderCardId(), transactionInfo.getTransactionId());
         List<Row> results = cassandraClient.selectQuery(query);
+        System.out.println("executeTransaction() results.size(): " + results.size());
         if (results.size() <= 0) {
             return false;
         }
@@ -112,7 +114,7 @@ public class CardServiceOperator {
         transaction.setSenderCardId(transactionRow.getString("card_id"));
         transaction.setReceiverCardId(transactionRow.getString("receiver_card_id"));
         transaction.setAmount(transactionRow.getInt("amount"));
-        transaction.setDate(Utils.convertLocalDateToDate(transactionRow.getLocalDate("date")));
+        transaction.setDate(Objects.requireNonNull(transactionRow.getLocalDate("date")).toString());
 
         // Get cardholder current credit limit to carry operation on
         query = String.format("SELECT credit_limit FROM %s WHERE card_id = '%s'",

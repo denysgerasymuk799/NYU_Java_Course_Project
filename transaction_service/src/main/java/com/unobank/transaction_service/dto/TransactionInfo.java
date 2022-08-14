@@ -1,25 +1,17 @@
 package com.unobank.transaction_service.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import java.util.Date;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class TransactionInfo {
     String transactionId;
     String senderCardId;
     String receiverCardId;
     int amount;
     String createTimestamp;
-    Date date;
-
-    public TransactionInfo() {}
-
-    public TransactionInfo(String transactionId, String senderCardId, String receiverCardId,
-                           int amount, String createTimestamp) {
-        this.transactionId = transactionId;
-        this.senderCardId = senderCardId;
-        this.receiverCardId = receiverCardId;
-        this.amount = amount;
-        this.createTimestamp = createTimestamp;
-    }
+    String date;
 }

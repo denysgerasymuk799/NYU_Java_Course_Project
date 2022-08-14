@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -104,7 +103,7 @@ public class TransactionServiceOperator {
         }
 
         String senderCardId = results.get(0).getString("card_id");
-        LocalDate date = results.get(0).getLocalDate("date");
+        String date = Objects.requireNonNull(results.get(0).getLocalDate("date")).toString();
         String receiverCardId = results.get(0).getString("receiver_card_id");
         System.out.println("date: " + date);
 
@@ -141,7 +140,7 @@ public class TransactionServiceOperator {
         String query = String.format("INSERT INTO %s (transaction_id, card_id, receiver_card_id, amount, date) " +
                         "VALUES ('%s', '%s', '%s', %d, '%s')",
                 successfulTransactionsDailyTable, record.getTransactionId(), record.getSenderCardId(),
-                record.getReceiverCardId(), record.getAmount(), date);
+                record.getReceiverCardId(), record.getAmount(), Utils.getFormattedDate(date));
         cassandraClient.executeInsertQuery(query);
     }
 }

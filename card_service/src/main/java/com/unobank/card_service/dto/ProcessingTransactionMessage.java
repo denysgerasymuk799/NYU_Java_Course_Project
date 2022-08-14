@@ -13,7 +13,6 @@ public class ProcessingTransactionMessage {
     String producer;
     String message;
     TransactionDto data;
-    String status;
 
     public ProcessingTransactionMessage() {}
 

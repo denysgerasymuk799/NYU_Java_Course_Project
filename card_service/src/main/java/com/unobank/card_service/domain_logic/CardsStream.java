@@ -30,7 +30,6 @@ public class CardsStream {
 			.load();
 	private final String transactionsTopic = dotenv.get("TRANSACTIONS_TOPIC");
 	private final String cardsTopic = dotenv.get("CARDS_TOPIC");
-	private final String resultsTopic = dotenv.get("ALL_RESULTS_TOPIC");
 
 	@Bean
 	public KStream<String, String> kstreamProcessingTransactions(StreamsBuilder builder) {
@@ -38,13 +37,13 @@ public class CardsStream {
 		// Read a source stream, filter it from nulls and generate a new stream with processed transactions
 		KStream<String, String> sourceStream = builder.stream(this.cardsTopic, Consumed.with(stringSerde, stringSerde));
 		KStream<String, String> filteredStream = sourceStream.filter((k, v) -> v != null);
-		KStream<String, String> uppercaseStream = filteredStream.mapValues(this::processTransaction);
+		KStream<String, String> processedTransactionsStream = filteredStream.mapValues(this::processTransaction);
 		// Filter nulls in case of errors
-		KStream<String, String> resultFilteredStream = uppercaseStream.filter((k, v) -> v != null);
+		KStream<String, String> resultFilteredStream = processedTransactionsStream.filter((k, v) -> v != null);
 
 		resultFilteredStream.to(transactionsTopic);
 		sourceStream.print(Printed.<String, String>toSysOut().withLabel("JSON original stream"));
-		uppercaseStream.print(Printed.<String, String>toSysOut().withLabel("JSON processTransaction stream"));
+		resultFilteredStream.print(Printed.<String, String>toSysOut().withLabel("JSON filteredProcessTransaction stream"));
 
 		return sourceStream;
 	}

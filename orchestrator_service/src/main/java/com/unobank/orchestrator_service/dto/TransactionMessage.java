@@ -22,8 +22,8 @@ public class TransactionMessage {
         this.responseType = responseType;
         this.message = message;
 
-        Date date = new Date();
         this.data = new TransactionInfo(transactionId, request.getSenderCardId(), request.getReceiverCardId(),
-                request.getAmount(), new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(new Date()), date);
+                request.getAmount(), new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()),
+                new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
     }
 }

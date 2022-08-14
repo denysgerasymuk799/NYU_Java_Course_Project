@@ -37,12 +37,14 @@ public class CardService {
 
         // Send a response to a TransactionService
         TransactionDto newTransactionDto = new TransactionDto();
+        newTransactionDto.setCreateTimestamp(transactionDto.getCreateTimestamp());
         newTransactionDto.setTransactionId(transactionDto.getTransactionId());
         newTransactionDto.setSenderCardId(transactionDto.getSenderCardId());
+        newTransactionDto.setReceiverCardId(transactionDto.getReceiverCardId());
         log.info("Transaction: [{}]. Status: {}", transaction.getData().getTransactionId(), TransactionStatus.COMPLETED);
         return new ProcessingTransactionMessage(
                 eventName, Constants.MESSAGE_TYPE_RESPONSE, Constants.RESPONSE_SUCCESS,
-                Constants.CARD_SERVICE_PRODUCER_NAME, message, transactionDto);
+                Constants.CARD_SERVICE_PRODUCER_NAME, message, newTransactionDto);
     }
 
     /**
@@ -68,12 +70,14 @@ public class CardService {
 
         // Send a response to a TransactionService
         TransactionDto newTransactionDto = new TransactionDto();
+        newTransactionDto.setCreateTimestamp(transactionDto.getCreateTimestamp());
         newTransactionDto.setTransactionId(transactionDto.getTransactionId());
         newTransactionDto.setSenderCardId(transactionDto.getSenderCardId());
+        newTransactionDto.setReceiverCardId(transactionDto.getReceiverCardId());
         log.info("Transaction: [{}]. Status: {}", transaction.getData().getTransactionId(), TransactionStatus.RESERVED);
         return new ProcessingTransactionMessage(
                 eventName, Constants.MESSAGE_TYPE_RESPONSE, Constants.RESPONSE_SUCCESS,
-                Constants.CARD_SERVICE_PRODUCER_NAME, message, transactionDto);
+                Constants.CARD_SERVICE_PRODUCER_NAME, message, newTransactionDto);
     }
 
     /**
@@ -96,12 +100,14 @@ public class CardService {
 
         // Send a response to a TransactionService
         TransactionDto newTransactionDto = new TransactionDto();
+        newTransactionDto.setCreateTimestamp(transactionDto.getCreateTimestamp());
         newTransactionDto.setTransactionId(transactionDto.getTransactionId());
         newTransactionDto.setSenderCardId(transactionDto.getSenderCardId());
+        newTransactionDto.setReceiverCardId(transactionDto.getReceiverCardId());
         log.info("Transaction: [{}]. Status: {}", transaction.getData().getTransactionId(), TransactionStatus.COMPLETED);
         return new ProcessingTransactionMessage(
                 eventName, Constants.MESSAGE_TYPE_RESPONSE, Constants.RESPONSE_SUCCESS,
-                Constants.CARD_SERVICE_PRODUCER_NAME, message, transactionDto);
+                Constants.CARD_SERVICE_PRODUCER_NAME, message, newTransactionDto);
     }
 
     /**
@@ -115,11 +121,13 @@ public class CardService {
 
         // Send a response to a TransactionService
         TransactionDto newTransactionDto = new TransactionDto();
+        newTransactionDto.setCreateTimestamp(transactionDto.getCreateTimestamp());
         newTransactionDto.setTransactionId(transactionDto.getTransactionId());
         newTransactionDto.setSenderCardId(transactionDto.getSenderCardId());
+        newTransactionDto.setReceiverCardId(transactionDto.getReceiverCardId());
         log.info("Transaction: [{}]. Status: {}", transaction.getData().getTransactionId(), TransactionStatus.CANCELLED);
         return new ProcessingTransactionMessage(
                 Events.TRANSACTION_CANCELLED.label, Constants.MESSAGE_TYPE_RESPONSE, Constants.RESPONSE_SUCCESS,
-                Constants.CARD_SERVICE_PRODUCER_NAME, "", transactionDto);
+                Constants.CARD_SERVICE_PRODUCER_NAME, "", newTransactionDto);
     }
 }
