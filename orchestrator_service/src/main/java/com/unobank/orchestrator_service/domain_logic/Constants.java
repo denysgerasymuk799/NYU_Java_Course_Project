@@ -1,7 +1,9 @@
 package com.unobank.orchestrator_service.domain_logic;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import org.springframework.stereotype.Component;
 
+@Component
 public final class Constants {
     public static final Dotenv dotenv = Dotenv
                         .configure()
