@@ -33,7 +33,8 @@ public class Utils {
         try {
             ProcessingTransactionMessage transaction = objectMapper.readValue(value, ProcessingTransactionMessage.class);
             return (transaction.getEventName().equals(Events.TRANSACTION_SUCCESS.label)) ||
-                    (transaction.getEventName().equals(Events.TRANSACTION_FAILURE.label));
+                    (transaction.getEventName().equals(Events.TRANSACTION_FAILURE.label)) ||
+                    (transaction.getEventName().equals(Events.RESERVATION_FAILURE.label));
         } catch (Exception e) {
             log.error(e.toString());
             return false;

@@ -122,6 +122,8 @@ public class TransactionsStream {
 				messageForCardService = transactionService.setTransactionCompletionStatus(transaction, TransactionStatus.COMPLETED);
 			} else if (transaction.getEventName().equals(Events.TRANSACTION_FAILURE.label)) {
 				messageForCardService = transactionService.setTransactionCompletionStatus(transaction, TransactionStatus.FAILED);
+			} else if (transaction.getEventName().equals(Events.RESERVATION_FAILURE.label)) {
+				messageForCardService = transactionService.setTransactionCompletionStatus(transaction, TransactionStatus.FAILED);
 			}
 			log.info("Completed the transaction: [{}]. Event: {}.", transaction.getData().getTransactionId(), transaction.getEventName());
 			return outputObjectMapper.writeValueAsString(messageForCardService);
