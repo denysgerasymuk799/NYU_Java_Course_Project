@@ -64,7 +64,7 @@ public class AccountController {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			GetBalanceRequest getBalanceRequest = mapper.readValue(request.getReader(), GetBalanceRequest.class);
-			userBalance = accountService.getBalance(getBalanceRequest.getCardId(), userDetails.get("card_id"));
+			userBalance = accountService.getBalance(getBalanceRequest.getCardId(), userDetails.get("cardId"));
 			if (userBalance == null) {
 				return new ResponseEntity<>("Invalid input cardId: it is not numeric", HttpStatus.BAD_REQUEST);
 			}
@@ -104,7 +104,7 @@ public class AccountController {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			GetTransactionsRequest getTransactionsRequest = mapper.readValue(request.getReader(), GetTransactionsRequest.class);
-			topTransactions = accountService.getTopTransactions(getTransactionsRequest.getCardId(), userDetails.get("card_id"),
+			topTransactions = accountService.getTopTransactions(getTransactionsRequest.getCardId(), userDetails.get("cardId"),
 					getTransactionsRequest.getStartIdx());
 			if (topTransactions == null) {
 				return new ResponseEntity<>("Invalid input cardId", HttpStatus.BAD_REQUEST);

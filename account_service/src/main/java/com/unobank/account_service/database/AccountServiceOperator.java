@@ -3,7 +3,6 @@ package com.unobank.account_service.database;
 import com.datastax.oss.driver.api.core.cql.Row;
 import com.unobank.account_service.database.models.TransactionRecord;
 import com.unobank.account_service.domain_logic.enums.TransactionStatus;
-import com.unobank.account_service.dto.TransactionDto;
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +60,12 @@ public class AccountServiceOperator {
         return creditLimit - reservedSum;
     }
 
+    /**
+     * Get top transactions for user cardId
+     * @param cardId: user cardId to get transactions
+     * @param startIdx: get transactions based on startIdx and Math.min(startIdx + 10, maxIdx))
+     * @return top transactions
+     */
     public ArrayList<TransactionRecord> getTransactionForCard(String cardId, int startIdx) {
         String query = String.format("SELECT transaction_id, sender_card_id, receiver_card_id, amount, status, date " +
                         "FROM %s " +
@@ -87,6 +92,6 @@ public class AccountServiceOperator {
             );
             topTransactions.add(transactionRecord);
         }
-        return topTransactions;
+        return new ArrayList<>(topTransactions.subList(startIdx, Math.min(startIdx + 10, maxIdx)));
     }
 }
