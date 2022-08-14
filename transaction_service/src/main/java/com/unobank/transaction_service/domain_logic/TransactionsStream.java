@@ -33,6 +33,12 @@ public class TransactionsStream {
 	private final String cardsTopic = dotenv.get("CARDS_TOPIC");
 	private final String resultsTopic = dotenv.get("ALL_RESULTS_TOPIC");
 
+	/**
+	 * Entrypoint method for Kafka Streams. Read messages from TransactionService's topic,
+	 * process them and save results in Results topic.
+	 * @param builder: default StreamsBuilder argument for the main Kafka Streams method
+	 * @return: based on methodology return sourceStream
+	 */
 	@Bean
 	public KStream<String, String> kstreamProcessingTransactions(StreamsBuilder builder) {
 		Serde<String> stringSerde = Serdes.String();
@@ -40,34 +46,30 @@ public class TransactionsStream {
 		KStream<String, String> sourceStream = builder.stream(this.transactionsTopic, Consumed.with(stringSerde, stringSerde));
 		KStream<String, String> filteredStream = sourceStream.filter((k, v) -> v != null);
 
-//		Map<String, KStream<String, String>> branches  = filteredStream.split()
-//				.branch((k, v) -> Utils.isProcessingTransaction(v), Branched.withFunction(s -> s.mapValues(this::processTransaction)))
-//				.branch((k, v) -> Utils.isResult(v), Branched.as("result"));
-
-//		BranchedKStream<String, String> branches  = filteredStream.split()
-//				.branch((k, v) -> Utils.isProcessingTransaction(v))
-//				.branch((k, v) -> Utils.isResult(v));
-
+		// Split the main topic stream on two branches:
+		// 		the first one -- for processing transactions;
+		// 		the second one -- for results of processed transactions;
 		Map<String, KStream<String, String>> branches  = filteredStream.split()
 				.branch((k, v) -> Utils.isProcessingTransaction(v))
 				.branch((k, v) -> Utils.isResult(v))
 				.noDefaultBranch();
+		log.info("branches.keySet(): {}", branches.keySet());
 
-		System.out.println("branches.keySet(): " + branches.keySet());
-
+		// Setup pipeline for processing new transactions
 		ArrayList<String> mapKeys = new ArrayList<>(branches.keySet());
 		KStream<String, String> processedTransactionsStream  = branches.get(mapKeys.get(0)).mapValues(this::processTransaction);
-
-//		KStream<String, String> processedTransactionsStream = filteredStream.mapValues(this::processTransaction);
 		// Filter nulls in case of errors
 		KStream<String, String> resultTransactionsFilteredStream = processedTransactionsStream.filter((k, v) -> v != null);
 
+		// Setup pipeline for processed transactions
 		KStream<String, String> resultsStream = branches.get(mapKeys.get(1)).mapValues(this::processResults);
-//		KStream<String, String> resultsStream = filteredStream.mapValues(this::processResults);
 		KStream<String, String> resultsFilteredStream = resultsStream.filter((k, v) -> v != null);
 
+		// Send result messages in appropriate topics
 		resultTransactionsFilteredStream.to(cardsTopic);
 		resultsFilteredStream.to(resultsTopic);
+
+		// Display each processed message
 		sourceStream.print(Printed.<String, String>toSysOut().withLabel("JSON original stream"));
 		resultTransactionsFilteredStream.print(Printed.<String, String>toSysOut().withLabel("JSON processTransaction stream"));
 		resultsFilteredStream.print(Printed.<String, String>toSysOut().withLabel("JSON processResults stream"));

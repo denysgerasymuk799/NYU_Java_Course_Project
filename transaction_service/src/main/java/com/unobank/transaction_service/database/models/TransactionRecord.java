@@ -1,6 +1,5 @@
 package com.unobank.transaction_service.database.models;
 
-import com.unobank.transaction_service.domain_logic.Utils;
 import com.unobank.transaction_service.domain_logic.enums.TransactionStatus;
 import lombok.Data;
 
