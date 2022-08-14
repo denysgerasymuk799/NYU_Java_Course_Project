@@ -23,6 +23,11 @@ import java.util.Objects;
 import com.unobank.orchestrator_service.domain_logic.enums.TransactionType;
 import com.unobank.orchestrator_service.dto.ProcessingTransactionMessage;
 
+/**
+ * ResultsConsumer is a Kafka consumer, which reads messages from ResultsTopic and
+ * save transaction in S3 to provide them for future extraction.
+ */
+
 @Slf4j
 @Service
 public class ResultsConsumer {
