@@ -128,7 +128,7 @@ const RegistrationForm = () => {
           variant="outlined"
           className={styles.nomoInput + " " + classes.root}
           value={formState.username}
-          onChange={e => handleOnlyLetters(e)}
+          onChange={e => handleChange(e)}
         />
         <TextField
           fullWidth
