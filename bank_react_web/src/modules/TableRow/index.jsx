@@ -7,8 +7,6 @@ const TableRow = (obj, key) => {
     <tr>
         <td>
             <span className="bold-date">{ obj.trans.date }</span>
-            {/* <br />
-            18:42 */}
         </td>
         <td>
             <i className="fa fa-arrow-alt-circle-up" aria-hidden="true"></i>

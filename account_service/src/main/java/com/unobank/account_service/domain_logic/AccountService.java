@@ -8,6 +8,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
+/**
+ * Account service provides getBalance and getTopTransactions functionality
+ */
+
 @Slf4j
 @Service
 public class AccountService {

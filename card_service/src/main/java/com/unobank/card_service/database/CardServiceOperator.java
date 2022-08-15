@@ -11,6 +11,11 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Operator, which provides all interactions with AWS Keyspaces
+ */
+
+
 @Slf4j
 @Component
 public class CardServiceOperator {

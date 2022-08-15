@@ -12,6 +12,10 @@ import com.unobank.transaction_service.domain_logic.enums.TransactionStatus;
 import com.unobank.transaction_service.dto.ProcessingTransactionMessage;
 import com.unobank.transaction_service.dto.TransactionDto;
 
+/**
+ * Transaction Service provides TOP_UP and TRANSACTION operations based on the event-driven logic
+ */
+
 @Slf4j
 @Service
 public class TransactionService {

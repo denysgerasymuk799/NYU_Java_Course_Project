@@ -15,6 +15,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Operator, which provides all interactions with AWS Keyspaces
+ */
+
 @Component
 public class TransactionServiceOperator {
     @Autowired

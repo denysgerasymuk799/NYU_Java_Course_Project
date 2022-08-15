@@ -1,6 +1,5 @@
 package com.unobank.account_service.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unobank.account_service.database.models.TransactionRecord;
 import com.unobank.account_service.domain_logic.AccountService;
 import com.unobank.account_service.payload.request.GetBalanceRequest;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -57,13 +55,9 @@ public class AccountController {
 		Claims jwtClaims = jwtUtils.getAllClaimsFromToken(jwt);
 		LinkedHashMap<String, String> userDetails = jwtClaims.get("user_details", LinkedHashMap.class);
 
-		// TODO: check case when cardId is not numeric
-
-		// TODO: add check in all REST microservices for cardId is numeric
 		Integer userBalance = 0;
 		try {
-			ObjectMapper mapper = new ObjectMapper();
-			GetBalanceRequest getBalanceRequest = mapper.readValue(request.getReader(), GetBalanceRequest.class);
+			GetBalanceRequest getBalanceRequest = new GetBalanceRequest(request.getParameter("card_id"));
 			userBalance = accountService.getBalance(getBalanceRequest.getCardId(), userDetails.get("cardId"));
 			if (userBalance == null) {
 				return new ResponseEntity<>("Invalid input cardId: it is not numeric", HttpStatus.BAD_REQUEST);
@@ -71,11 +65,6 @@ public class AccountController {
 			if (userBalance == -1) {
 				return new ResponseEntity<>("Input cardId is not equal to signed in user card id", HttpStatus.UNAUTHORIZED);
 			}
-		} catch (IOException e) {
-			log.error(e.toString());
-			return new ResponseEntity<>(
-					"Incorrect type of parameters in the request body. Error message: " + e.toString(),
-					HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			log.error(e.toString());
 			return new ResponseEntity<>(
@@ -97,23 +86,17 @@ public class AccountController {
 		Claims jwtClaims = jwtUtils.getAllClaimsFromToken(jwt);
 		LinkedHashMap<String, String> userDetails = jwtClaims.get("user_details", LinkedHashMap.class);
 
-		// TODO: check case when cardId is not numeric
 
-		// TODO: add check in all REST microservices for cardId is numeric
+		// TODO: add Swagger documentation and other cool simple features
 		ArrayList<TransactionRecord> topTransactions = new ArrayList<>();
 		try {
-			ObjectMapper mapper = new ObjectMapper();
-			GetTransactionsRequest getTransactionsRequest = mapper.readValue(request.getReader(), GetTransactionsRequest.class);
+			GetTransactionsRequest getTransactionsRequest = new GetTransactionsRequest(
+					request.getParameter("card_id"), Integer.parseInt(request.getParameter("start_idx")));
 			topTransactions = accountService.getTopTransactions(getTransactionsRequest.getCardId(), userDetails.get("cardId"),
 					getTransactionsRequest.getStartIdx());
 			if (topTransactions == null) {
 				return new ResponseEntity<>("Invalid input cardId", HttpStatus.BAD_REQUEST);
 			}
-		} catch (IOException e) {
-			log.error(e.toString());
-			return new ResponseEntity<>(
-					"Incorrect type of parameters in the request body. Error message: " + e.toString(),
-					HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			log.error(e.toString());
 			return new ResponseEntity<>(

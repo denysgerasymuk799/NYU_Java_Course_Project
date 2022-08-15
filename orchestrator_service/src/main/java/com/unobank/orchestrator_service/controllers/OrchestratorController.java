@@ -90,8 +90,7 @@ public class OrchestratorController {
 
 		NotificationResponse result = null;
 		try {
-			ObjectMapper mapper = new ObjectMapper();
-			NotificationRequest notificationRequest = mapper.readValue(request.getReader(), NotificationRequest.class);
+			NotificationRequest notificationRequest = new NotificationRequest(request.getParameter("last_transaction_id"));
 			String userCardId = userDetails.get("cardId");
 			if ((userCardId == null) || (userCardId.length() <= 1)) {
 				return new ResponseEntity<>("User is unauthorized", HttpStatus.UNAUTHORIZED);
@@ -101,11 +100,6 @@ public class OrchestratorController {
 				return new ResponseEntity<>("Transaction with input transaction id was not processed for userCardId",
 						HttpStatus.BAD_REQUEST);
 			}
-		} catch (IOException e) {
-			log.error(e.toString());
-			return new ResponseEntity<>(
-					"Incorrect type of parameters in the request body. Error message: " + e.toString(),
-					HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			log.error(e.toString());
 			return new ResponseEntity<>(

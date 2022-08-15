@@ -26,6 +26,7 @@ const RegistrationForm = () => {
   const [formState, setFormState] = useState({
     firstname: '',
     lastname: '',
+    username: '',
     email: '',
     password: '',
     repeat_password: '',
@@ -68,11 +69,12 @@ const RegistrationForm = () => {
   const handleSubmit = async e => {
     e.preventDefault();
 
-    const { firstname, lastname, email, password, repeat_password } = formState
+    const { firstname, lastname, username, email, password, repeat_password } = formState
 
     const jsonData = {
       "firstname": firstname,
       "lastname": lastname,
+      "username": username,
       "email": email,
       "password": password,
       "repeat_password": repeat_password
@@ -100,9 +102,10 @@ const RegistrationForm = () => {
     <section id="right-section">
       <form>
         <h3>Sign up</h3>
+        <p className={styles.message}>{formState.error}</p>
         <TextField
           fullWidth
-          label="Firstname"
+          label="First name"
           name="firstname"
           variant="outlined"
           className={styles.nomoInput + " " + classes.root}
@@ -111,11 +114,20 @@ const RegistrationForm = () => {
         />
         <TextField
           fullWidth
-          label="Lastname"
+          label="Last name"
           name="lastname"
           variant="outlined"
           className={styles.nomoInput + " " + classes.root}
           value={formState.lastname}
+          onChange={e => handleOnlyLetters(e)}
+        />
+        <TextField
+          fullWidth
+          label="Username"
+          name="username"
+          variant="outlined"
+          className={styles.nomoInput + " " + classes.root}
+          value={formState.username}
           onChange={e => handleOnlyLetters(e)}
         />
         <TextField

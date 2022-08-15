@@ -80,7 +80,7 @@ const LoginForm = () => {
   return (
     <section id="right-section">
       <form noValidate>
-        <h3>Sign in to a personal account</h3>
+        <h3>Sign in</h3>
         <p className={styles.message}>{formState.error}</p>
         <TextField
           fullWidth
@@ -108,7 +108,7 @@ const LoginForm = () => {
           <span>Continue</span>
         </button>
         <p className={styles.additionalText}>
-          Don't have an account?? <a href="/sign_up">Sign up</a>
+          Don't have an account? <a href="/sign_up">Sign up</a>
         </p>
       </form>
     </section>

@@ -132,7 +132,6 @@ public class AuthenticationController {
 				.collect(Collectors.toList());
 
 		log.info("User with username {} is successfully signed in.", userDetails.getUsername());
-
 		return ResponseEntity.ok(new JwtResponse(jwt,
 				userDetails.getId(),
 				userDetails.getUsername(),

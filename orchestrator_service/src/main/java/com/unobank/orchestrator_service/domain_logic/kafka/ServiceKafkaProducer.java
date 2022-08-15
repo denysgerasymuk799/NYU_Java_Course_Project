@@ -16,6 +16,10 @@ import com.unobank.orchestrator_service.dto.TransactionMessage;
 
 import java.util.UUID;
 
+/**
+ * Service producer, which sends messages to TransactionService's topic
+ */
+
 @Slf4j
 @Component
 public class ServiceKafkaProducer {

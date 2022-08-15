@@ -1,7 +1,6 @@
 package com.unobank.orchestrator_service.domain_logic;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unobank.orchestrator_service.domain_logic.enums.Events;
 import com.unobank.orchestrator_service.domain_logic.enums.TransactionType;
 import com.unobank.orchestrator_service.domain_logic.kafka.ServiceKafkaProducer;
@@ -11,13 +10,10 @@ import com.unobank.orchestrator_service.security.jwt.JwtUtils;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.UUID;
 
 @Slf4j
 @Component

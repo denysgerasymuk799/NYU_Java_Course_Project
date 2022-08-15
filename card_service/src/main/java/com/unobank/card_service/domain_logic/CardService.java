@@ -10,6 +10,11 @@ import com.unobank.card_service.dto.ProcessingTransactionMessage;
 import com.unobank.card_service.dto.TransactionDto;
 import org.springframework.stereotype.Service;
 
+
+/**
+ * Card Service provides TOP_UP and TRANSACTION operations based on the event-driven logic
+ */
+
 @Slf4j
 @Service
 public class CardService {

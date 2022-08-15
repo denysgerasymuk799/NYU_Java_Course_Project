@@ -16,6 +16,10 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
+/**
+ * Card Manager allocates a card for a new user
+ */
+
 @Service
 @Slf4j
 public class CardManager {
