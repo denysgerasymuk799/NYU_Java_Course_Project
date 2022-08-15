@@ -67,7 +67,7 @@ const LoginForm = () => {
         localStorage.setItem('access_token', accessToken)
         localStorage.setItem('refresh_token', refreshToken)
         localStorage.setItem('username', apiResponse.data.username)
-        localStorage.setItem('card_id', apiResponse.data.cardId)
+        localStorage.setItem('card_id', apiResponse.data.card_id)
         localStorage.setItem('email', apiResponse.data.email)
         history.go('/profile')
       })
