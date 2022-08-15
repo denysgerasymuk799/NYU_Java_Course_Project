@@ -8,10 +8,10 @@ const LoginView = () => (
       <h1 className="main-logo login-logo">
         <a href="index.html">
           unobank
-          <span className="gray">| Ukrainian Catholic University</span>
+          <span className="gray">| New York University</span>
         </a>
       </h1>
-      <h2>Спробуйте новий веб-банкінг зі зручним інтерфейсом</h2>
+      <h2>Try the new web banking with a user-friendly interface</h2>
       <img alt="" src="./img/qr-cat.svg" />
     </section>
 

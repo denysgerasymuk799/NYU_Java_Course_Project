@@ -7,10 +7,9 @@
 import axios from 'axios'
 import env from './env'
 
-const registrationServiceURL = env.REGISTRATION_URL
 const authServiceURL = env.AUTH_URL
-const transactionServiceURL = env.TRANSACTION_URL
-const analyticsServiceURL = env.ANALYTICS_URL
+const orchestratorServiceURL = env.TRANSACTION_URL
+const accountServiceURL = env.ACCOUNT_URL
 
 // request interceptor to add the auth token header to requests
 axios.interceptors.request.use(
@@ -49,14 +48,12 @@ axios.interceptors.response.use(
 
 // functions to make api calls
 const api = {
-  register: body => axios.post(`${registrationServiceURL}/registration`, body),
-  login: body => axios.post(`${authServiceURL}/login`, body),
-  handle_transaction: body => axios.post(`${transactionServiceURL}/handle_transaction`, body),
-  get_balance: card_id => axios.get(`${transactionServiceURL}/get_balance?card_id=${card_id}`),
-  get_transactions: (card_id, idx) => axios.get(`${transactionServiceURL}/get_transactions?card_id=${card_id}&start_idx=${idx}`),
-  get_notifications: last_transaction_id => axios.get(`${transactionServiceURL}/get_notifications?last_transaction_id=${last_transaction_id}`),
-  get_daily_stat: (from, to, card_id) => axios.get(`${analyticsServiceURL}/get_spendings_by_days?from_date=${from}&to_date=${to}&card_id=${card_id}`),
-  get_monthly_stat: (from, to, card_id) => axios.get(`${analyticsServiceURL}/get_spendings_by_months?from_date=${from}&to_date=${to}&card_id=${card_id}`),
+  register: body => axios.post(`${authServiceURL}/signup`, body),
+  login: body => axios.post(`${authServiceURL}/signin`, body),
+  handle_transaction: body => axios.post(`${orchestratorServiceURL}/handle_transaction`, body),
+  get_notifications: last_transaction_id => axios.get(`${orchestratorServiceURL}/get_notifications?last_transaction_id=${last_transaction_id}`),
+  get_balance: card_id => axios.get(`${accountServiceURL}/get_balance?card_id=${card_id}`),
+  get_transactions: (card_id, idx) => axios.get(`${accountServiceURL}/get_transactions?card_id=${card_id}&start_idx=${idx}`)
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export

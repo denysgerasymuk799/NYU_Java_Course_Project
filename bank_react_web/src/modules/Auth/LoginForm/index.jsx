@@ -23,8 +23,8 @@ const LoginForm = () => {
   const classes = useStyles();
 
   const [formState, setFormState] = useState({
-    email: 'lopushanskyy@gmail.co',
-    password: '12345',
+    username: 'denys20220728_1',
+    password: 'secret',
     error: '',
   })
 
@@ -48,45 +48,47 @@ const LoginForm = () => {
 
   const handleSubmit = async e => {
     e.preventDefault()
-    const { email, password } = formState
-    const formData = new FormData()
-    formData.append('username', email)
-    formData.append('password', password)
+    const { username, password } = formState
+
+    const jsonData = {
+      "username": username,
+      "password": password
+    }
     
     await api
-      .login(formData)
+      .login(jsonData)
       .then(apiResponse => {
         console.log('apiResponse', apiResponse.data)
-        const accessToken = apiResponse.data.access_token
+        const accessToken = apiResponse.data.token
         const refreshToken = apiResponse.data.refresh_token
         console.log('accessToken, refreshToken', accessToken, refreshToken)
+        console.log('username', apiResponse.data.username)
 
         localStorage.setItem('access_token', accessToken)
         localStorage.setItem('refresh_token', refreshToken)
+        localStorage.setItem('username', apiResponse.data.username)
+        localStorage.setItem('card_id', apiResponse.data.cardId)
         localStorage.setItem('email', apiResponse.data.email)
-        localStorage.setItem('user_name', apiResponse.data.user_name)
-        localStorage.setItem('card_id', apiResponse.data.card_id)
-        localStorage.setItem('user_id', apiResponse.data.user_id)
         history.go('/profile')
       })
       .catch(error => {
         console.log('error', error)
-        setFormState({ ...formState, error: 'Сталася помилка: ' + error })
+        setFormState({ ...formState, error: 'Error has occurred: ' + error })
       })
   }
 
   return (
     <section id="right-section">
       <form noValidate>
-        <h3>Вхід в особистий кабінет</h3>
+        <h3>Sign in to a personal account</h3>
         <p className={styles.message}>{formState.error}</p>
         <TextField
           fullWidth
-          label="E-mail"
-          name="email"
+          label="Username"
+          name="username"
           variant="outlined"
           className={styles.nomoInput + " " + classes.root}
-          value={formState.email}
+          value={formState.username}
           onChange={e => handleChange(e)}
         />
         <TextField
@@ -103,10 +105,10 @@ const LoginForm = () => {
           className="bank-btn black login-btn"
           onClick={e => handleSubmit(e)}
         >
-          <span>Продовжити</span>
+          <span>Continue</span>
         </button>
         <p className={styles.additionalText}>
-          Не маєте акаунту? <a href="/sign_up">Зареєструйтеся</a>
+          Don't have an account?? <a href="/sign_up">Sign up</a>
         </p>
       </form>
     </section>

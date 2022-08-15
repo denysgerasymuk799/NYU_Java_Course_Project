@@ -37,22 +37,22 @@ const AddMoneyModal = ({ balanceSetter }) => {
       return;
     }
 
-    const formData = new FormData()
-    formData.append('card_id', localStorage.getItem('card_id'))
-    formData.append('receiver_card_id', localStorage.getItem('card_id'))
-    formData.append('amount', amount)
-    formData.append('transaction_type', 'BALANCE_TOP_UP')
+    const jsonData = {
+      'sender_card_id': localStorage.getItem('card_id'),
+      'receiver_card_id': localStorage.getItem('card_id'),
+      'amount': amount,
+      'transaction_type': 'TOP_UP'
+    }
     
     await api
-      .handle_transaction(formData)
+      .handle_transaction(jsonData)
       .then(apiResponse => {
         console.log('apiResponse', apiResponse.data);
-        showSuccessMessage("Транзакцію надіслано на опрацювання");
-        // setTimeout(() => {  balanceSetter(); }, 1000);
+        showSuccessMessage("The transaction has been sent for processing");
       })
       .catch(error => {
         console.log('error', error);
-        showErrorMessage("На жаль, транзакція не пройшла. Спробуйте пізніше");
+        showErrorMessage("Unfortunately, the transaction failed. Please, try again later");
       })
   }
 
@@ -71,10 +71,10 @@ const AddMoneyModal = ({ balanceSetter }) => {
           </div>
           <div className="bank-modal-content">
             <form noValidate> 
-              <p>Введіть суму, на яку хочете поповнити свій рахунок</p>
+              <p>Enter the amount by which you want to top up your balance</p>
               <TextField
                 fullWidth
-                label="Сума у грн (₴)"
+                label="Amount in UAH (₴)"
                 name="amount"
                 variant="outlined"
                 className={styles.customInput + " " + classes.root}
@@ -83,7 +83,7 @@ const AddMoneyModal = ({ balanceSetter }) => {
               />
               <button className="bank-btn" onClick={handleSubmit}  data-dismiss="modal">
                 <i className="fa fa-money" aria-hidden="true"></i>
-                <span>Поповнити</span>
+                <span>Top up</span>
               </button>
             </form>
           </div>

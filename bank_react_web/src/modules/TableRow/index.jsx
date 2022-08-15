@@ -6,7 +6,7 @@ const TableRow = (obj, key) => {
   return (
     <tr>
         <td>
-            <span className="bold-date">{ new Date(parseInt(obj.trans.date)).toISOString().slice(0, 10) }</span>
+            <span className="bold-date">{ obj.trans.date }</span>
             {/* <br />
             18:42 */}
         </td>
@@ -14,10 +14,10 @@ const TableRow = (obj, key) => {
             <i className="fa fa-arrow-alt-circle-up" aria-hidden="true"></i>
             <span className="bold-date">
                 {(() => {
-                    switch (obj.trans.receiver_card_id) {
-                        case 'BALANCE-TOP-UP':   return ` ${obj.trans.card_id}`
-                        case localStorage.getItem('card_id'):  return ` ${obj.trans.card_id}`
-                        default:                 return ` ${obj.trans.receiver_card_id}`
+                    switch (obj.trans.receiverCardId) {
+                        case 'TOP_UP':   return ` ${obj.trans.senderCardId}`
+                        case localStorage.getItem('card_id'):  return ` ${obj.trans.senderCardId}`
+                        default:                 return ` ${obj.trans.receiverCardId}`
                     }
                 })()}
             </span>
@@ -25,8 +25,8 @@ const TableRow = (obj, key) => {
         <td>
             <span className="bold-date">
                 {(() => {
-                    switch (obj.trans.receiver_card_id) {
-                        case 'BALANCE-TOP-UP':  return obj.trans.amount;
+                    switch (obj.trans.receiverCardId) {
+                        case 'TOP_UP':  return obj.trans.amount;
                         case localStorage.getItem('card_id'):  return obj.trans.amount;
                         default:                 return `-${obj.trans.amount}`;
                     }
@@ -44,9 +44,9 @@ const TableRow = (obj, key) => {
             <span>
                 {(() => {
                     switch (obj.trans.status) {
-                        case 'COMPLETED':   return ' успішно';
-                        case 'NEW':         return ' опрацьовується';
-                        default:            return ' помилка';
+                        case 'COMPLETED':   return ' successful';
+                        case 'NEW':         return ' in process';
+                        default:            return ' failed';
                     }
                 })()}
             </span>

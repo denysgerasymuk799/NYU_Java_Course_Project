@@ -39,22 +39,23 @@ const PaymentModal = ({ balanceSetter }) => {
       return;
     }
 
-    const formData = new FormData()
-    formData.append('card_id', localStorage.getItem('card_id'))
-    formData.append('receiver_card_id', receiver_card)
-    formData.append('amount', amount)
-    formData.append('transaction_type', 'TRANSFER')
+    const jsonData = {
+      'sender_card_id': localStorage.getItem('card_id'),
+      'receiver_card_id': receiver_card,
+      'amount': amount,
+      'transaction_type': 'TRANSACTION'
+    }
     
     await api
-      .handle_transaction(formData)
+      .handle_transaction(jsonData)
       .then(apiResponse => {
         console.log('apiResponse', apiResponse.data);
-        showSuccessMessage("Транзакцію надіслано на опрацювання");
+        showSuccessMessage("The transaction has been sent for processing");
         setTimeout(() => {  balanceSetter(); }, 1000);
       })
       .catch(error => {
         console.log('error', error);
-        showErrorMessage("На жаль, транзакція не пройшла. Спробуйте пізніше");
+        showErrorMessage("Unfortunately, the transaction failed. Please, try again later");
       })
   }
 
@@ -73,10 +74,10 @@ const PaymentModal = ({ balanceSetter }) => {
           </div>
           <div className="bank-modal-content">
             <form noValidate> 
-              <p>Введіть суму переказу</p>
+              <p>Enter the transfer amount</p>
               <TextField
                 fullWidth
-                label="Картка отримувача"
+                label="Receiver card"
                 name="receiver_card"
                 variant="outlined"
                 className={styles.customInput + " " + classes.root}
@@ -85,7 +86,7 @@ const PaymentModal = ({ balanceSetter }) => {
               />
               <TextField
                 fullWidth
-                label="Сума у грн (₴)"
+                label="Amount in UAH (₴)"
                 name="amount"
                 variant="outlined"
                 className={styles.customInput + " " + classes.root}
@@ -94,7 +95,7 @@ const PaymentModal = ({ balanceSetter }) => {
               />
               <button className="bank-btn" onClick={handleSubmit}  data-dismiss="modal">
                 <i className="fa fa-money" aria-hidden="true"></i>
-                <span>Переказати</span>
+                <span>Transfer</span>
               </button>
             </form>
           </div>

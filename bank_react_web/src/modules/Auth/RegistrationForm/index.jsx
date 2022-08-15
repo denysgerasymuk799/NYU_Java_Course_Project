@@ -29,9 +29,6 @@ const RegistrationForm = () => {
     email: '',
     password: '',
     repeat_password: '',
-    birthday_date: '',
-    city: '',
-    address: '',
     error: '',
   })
 
@@ -53,18 +50,17 @@ const RegistrationForm = () => {
     setFormState({ ...formState, [e.target.name]: e.target.value })
   }
 
-  function validate(form) {
-    for(var field of form.entries()) {
+  function validate(json) {
+    for(var field of Object.entries(json)) {
       if (field[1] === "") {
         return [false, 'One or more fields are missing'];
       }
     }
-    console.log('hello');
     const emailPattern = /[a-zA-Z0-9]+[\.]?([a-zA-Z0-9]+)?[\@][a-z]{3,9}[\.][a-z]{2,5}/g;
-    const result = emailPattern.test(form.get('email'));
+    const result = emailPattern.test(json['email']);
     if(!result){ return [false, 'Wrong email'] };
 
-    if (form.get('password').length < 4) { return [false, 'Password too short'] }
+    if (json['password'].length < 4) { return [false, 'Password too short'] }
 
     return [true, ''];
   }
@@ -72,45 +68,41 @@ const RegistrationForm = () => {
   const handleSubmit = async e => {
     e.preventDefault();
 
-    const { firstname, lastname, email, password, repeat_password, 
-      birthday_date, city, address } = formState
-    
-    const formData = new FormData()
-    formData.append('firstname', firstname)
-    formData.append('lastname', lastname)
-    formData.append('email', email)
-    formData.append('password', password)
-    formData.append('repeat_password', repeat_password)
-    formData.append('birthday_date', birthday_date)
-    formData.append('city', city)
-    formData.append('address', address)
+    const { firstname, lastname, email, password, repeat_password } = formState
 
-    const [validResult, errorText] = validate(formData);
+    const jsonData = {
+      "firstname": firstname,
+      "lastname": lastname,
+      "email": email,
+      "password": password,
+      "repeat_password": repeat_password
+    }
+
+    const [validResult, errorText] = validate(jsonData);
 
     console.log("validResult", validResult, errorText);
     
     if (!validResult) { return setFormState({ ...formState, 'error': errorText }) }
 
     await api
-      .register(formData)
+      .register(jsonData)
       .then(apiResponse => {
         console.log('apiResponse', apiResponse.data)
         window.location.href = '/login';
       })
       .catch(error => {
         console.log('error', error)
-        setFormState({ ...formState, error: 'Сталася помилка: ' + error })
+        setFormState({ ...formState, error: 'Error has occurred: ' + error })
       })
   }
 
   return (
     <section id="right-section">
       <form>
-        <h3>Реєстрація</h3>
-        <p className={styles.message}>{formState.error} Переконайтеся, що дата народження вказана у форматі дд/мм/рррр.</p>
+        <h3>Sign up</h3>
         <TextField
           fullWidth
-          label="Ім'я"
+          label="Firstname"
           name="firstname"
           variant="outlined"
           className={styles.nomoInput + " " + classes.root}
@@ -119,7 +111,7 @@ const RegistrationForm = () => {
         />
         <TextField
           fullWidth
-          label="Прізвище"
+          label="Lastname"
           name="lastname"
           variant="outlined"
           className={styles.nomoInput + " " + classes.root}
@@ -128,7 +120,7 @@ const RegistrationForm = () => {
         />
         <TextField
           fullWidth
-          label="Е-пошта"
+          label="E-mail"
           name="email"
           variant="outlined"
           className={styles.nomoInput + " " + classes.root}
@@ -137,7 +129,7 @@ const RegistrationForm = () => {
         />
         <TextField
           fullWidth
-          label="Пароль"
+          label="Password"
           name="password"
           type="password"
           variant="outlined"
@@ -147,7 +139,7 @@ const RegistrationForm = () => {
         />
         <TextField
           fullWidth
-          label="Повторити пароль"
+          label="Password repeat"
           name="repeat_password"
           type="password"
           variant="outlined"
@@ -155,52 +147,14 @@ const RegistrationForm = () => {
           value={formState.repeat_password}
           onChange={e => handleChange(e)}
         />
-        <TextField
-          fullWidth
-          label="Дата народження у форматі дд/мм/рррр"
-          name="birthday_date"
-          variant="outlined"
-          className={styles.nomoInput + " " + classes.root}
-          value={formState.birthday_date}
-          onChange={e => handleChange(e)}
-        />
-        {/* <TextField
-          fullWidth
-          InputLabelProps={{ shrink: true, required: true }}
-          label="Дата народження"
-          name="birthday_date"
-          type="date"
-          variant="outlined"
-          className={styles.nomoInput + " " + classes.root}
-          value={formState.repeat_password}
-          onChange={e => handleChange(e)}
-        /> */}
-        <TextField
-          fullWidth
-          label="Місто проживання"
-          name="city"
-          variant="outlined"
-          className={styles.nomoInput + " " + classes.root}
-          value={formState.city}
-          onChange={e => handleChange(e)}
-        />
-        <TextField
-          fullWidth
-          label="Адрес"
-          name="address"
-          variant="outlined"
-          className={styles.nomoInput + " " + classes.root}
-          value={formState.address}
-          onChange={e => handleChange(e)}
-        />
         <button 
           className="bank-btn black login-btn"
           onClick={e => handleSubmit(e)}
         >
-          <span>Продовжити</span>
+          <span>Continue</span>
         </button>
         <p className={styles.additionalText}>
-          Вже маєте акаунт? <a href="/">Увійдіть</a>
+          Do you have an account? <a href="/">Sign in</a>
         </p>
       </form>
     </section>
