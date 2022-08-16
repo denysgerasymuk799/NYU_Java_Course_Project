@@ -6,6 +6,8 @@ import com.unobank.orchestrator_service.payload.response.NotificationResponse;
 import com.unobank.orchestrator_service.payload.request.NotificationRequest;
 import com.unobank.orchestrator_service.payload.response.SuccessfulTransactionResponse;
 import io.jsonwebtoken.Claims;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,7 @@ import com.unobank.orchestrator_service.security.jwt.JwtUtils;
 @RestController
 @Slf4j
 @RequestMapping("/api/orchestrator")
+@Tag(name = "Orchestrator Service REST Endpoint")
 public class OrchestratorController {
 	@Autowired
 	private JwtUtils jwtUtils;
@@ -50,6 +53,7 @@ public class OrchestratorController {
 
 	@PostMapping("/handle_transaction")
 	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+	@Operation(summary = "Handles transactions", description = "Takes a user transaction, sends it on processing and returns transaction id.")
 	public ResponseEntity<?> handleTransaction(HttpServletRequest request) {
 		log.info("Process a new transaction.");
 		String jwt = parseJwt(request);
@@ -79,6 +83,7 @@ public class OrchestratorController {
 
 	@GetMapping("/get_notifications")
 	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+	@Operation(summary = "Searches notifications", description = "Takes a transaction id and returns its status.")
 	public ResponseEntity<?> getNotifications(HttpServletRequest request) {
 		log.info("Get notifications");
 		String jwt = parseJwt(request);

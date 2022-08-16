@@ -2,6 +2,8 @@ package com.unobank.auth_service.controllers;
 
 import com.datastax.oss.driver.api.core.servererrors.InvalidQueryException;
 import com.unobank.auth_service.domain_logic.CardManager;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +38,7 @@ import com.unobank.auth_service.security.services.UserDetailsImpl;
 @RestController
 @Slf4j
 @RequestMapping("/api/auth")
+@Tag(name = "Auth Service REST Endpoint")
 public class AuthenticationController {
 	@Autowired
 	JwtUtils jwtUtils;
@@ -51,6 +54,7 @@ public class AuthenticationController {
 	CardManager cardManager;
 
 	@PostMapping("/signup")
+	@Operation(summary = "Registers a user", description = "Takes a SignupRequest and returns a registration status.")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
 		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
 			return ResponseEntity
@@ -118,6 +122,7 @@ public class AuthenticationController {
 	}
 
 	@PostMapping("/signin")
+	@Operation(summary = "Authenticates a user", description = "Takes a LoginRequest and returns JWT, userId, username, cardId, email and user roles.")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
 		Authentication authentication = authenticationManager.authenticate(

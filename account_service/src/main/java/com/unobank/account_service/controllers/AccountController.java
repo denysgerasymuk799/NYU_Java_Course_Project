@@ -8,6 +8,8 @@ import com.unobank.account_service.payload.response.GetBalanceResponse;
 import com.unobank.account_service.payload.response.GetTransactionsResponse;
 import com.unobank.account_service.security.jwt.JwtUtils;
 import io.jsonwebtoken.Claims;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,7 @@ import java.util.LinkedHashMap;
 @RestController
 @Slf4j
 @RequestMapping("/api/account_service")
+@Tag(name = "Account Service REST Endpoint")
 public class AccountController {
 	@Autowired
 	private JwtUtils jwtUtils;
@@ -46,6 +49,7 @@ public class AccountController {
 
 	@GetMapping("/get_balance")
 	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+	@Operation(summary = "Computes user balance", description = "Takes a user card id and returns his card balance.")
 	public ResponseEntity<?> getBalance(HttpServletRequest request) {
 		log.info("Get balance request.");
 		String jwt = parseJwt(request);
@@ -77,6 +81,8 @@ public class AccountController {
 
 	@GetMapping("/get_transactions")
 	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+	@Operation(summary = "Collects user top transactions",
+			description = "Takes a user card id and start index for the first top transaction, and returns his card balance.")
 	public ResponseEntity<?> getTransactions(HttpServletRequest request) {
 		log.info("Get transactions request.");
 		String jwt = parseJwt(request);
@@ -86,8 +92,6 @@ public class AccountController {
 		Claims jwtClaims = jwtUtils.getAllClaimsFromToken(jwt);
 		LinkedHashMap<String, String> userDetails = jwtClaims.get("user_details", LinkedHashMap.class);
 
-
-		// TODO: add Swagger documentation and other cool simple features
 		ArrayList<TransactionRecord> topTransactions = new ArrayList<>();
 		try {
 			GetTransactionsRequest getTransactionsRequest = new GetTransactionsRequest(
