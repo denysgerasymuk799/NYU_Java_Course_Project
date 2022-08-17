@@ -1,6 +1,28 @@
 # NYU_Java_Course_Project
 
 
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/42843889/184997881-3459e0a0-fdf5-4753-b494-7d66858b0728.jpeg" alt="NYU_logo"/>
+</p>
+
+
+## Short Description
+
+This project is a submission for NYU Java course project. It is called **unobank**, which is a web banking project. It allows users to sign up and sign in into their accounts, top up their card balances, send money based on the card_id of recipient, and see a list of transactions. The project's architecture is heavily decoupled by using **five** microservices that interact with each other.
+
+**Project documentation** -- https://proximal-bladder-a8d.notion.site/NYU-Java-unobank-Online-Web-Banking-aa5d609d46e84c59815e79400c2bb4ec
+
+## Features
+
+- Functionality: `Deposit money` `Send money` `List transactions` `Login/Sign Up with JWT Token` `User/General Bank Analytics`
+- Technologies: `Kafka`, `Java`
+- Frameworks: `Spring Boot`, `Kafka Streams for Spring`
+- Databases: `AWS Keyspaces (serverless Cassandra)`, `Cloud MongoDB`
+- Java features: `Development of microservices`, `REST API development`, `Interaction with Kafka (event-driven design)`, `Interaction with two NoSQL databases`, `Logic with JWT tokens for authorization`
+
+
+## Diagrams
+
 ## Useful commands
 
 * Start zookeeper server: `./bin/zookeeper-server-start.sh config/zookeeper.properties`
@@ -16,3 +38,9 @@
 ## Content
 
 * Why do Transaction and Cards services not have JWT validation?
+
+* http://localhost:8001/swagger-ui/index.html
+
+* http://localhost:8002/swagger-ui/index.html
+
+* http://localhost:8005/swagger-ui/index.html
