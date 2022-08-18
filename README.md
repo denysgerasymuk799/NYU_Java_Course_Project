@@ -14,8 +14,8 @@ This project is a submission for NYU Java course project. It is called **unobank
 
 ## Features
 
-- Functionality: `Deposit money` `Send money` `List transactions` `Login/Sign Up with JWT Token` `User/General Bank Analytics`
-- Technologies: `Kafka`, `Java`
+- Functionality: `Deposit money`, `Send money`, `List transactions`, `Sign in/Sign Up with JWT Token`
+- Technologies: `Kafka`, `Java 8`
 - Frameworks: `Spring Boot`, `Kafka Streams for Spring`
 - Databases: `AWS Keyspaces (serverless Cassandra)`, `Cloud MongoDB`
 - Java features: `Development of microservices`, `REST API development`, `Interaction with Kafka (event-driven design)`, `Interaction with two NoSQL databases`, `Logic with JWT tokens for authorization`
