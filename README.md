@@ -117,6 +117,14 @@ For more detailes, read README in `./bank_react_web`.
 
 4) For API testing you can use a Postman collection in `./docs/NYU_Java_Project.postman_collection.json`. First, you must register or use already existing credentials for login to get JWT token in the response and use it in a Authorization header for any other endpoints. Note that JWT will expire in **20 minutes**. For more details you can follow my above youtube video.
 
+5) Enjoy the React UI and explore Swagger docuementation:
+
+* http://localhost:8001/swagger-ui/index.html
+
+* http://localhost:8002/swagger-ui/index.html
+
+* http://localhost:8005/swagger-ui/index.html
+
 
 ## Useful commands
 
