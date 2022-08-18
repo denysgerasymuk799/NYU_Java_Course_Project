@@ -12,6 +12,8 @@ This project is a submission for NYU Java course project. It is called **unobank
 
 **Project documentation** -- https://proximal-bladder-a8d.notion.site/NYU-Java-unobank-Online-Web-Banking-aa5d609d46e84c59815e79400c2bb4ec
 
+**Project video presentation** -- https://youtu.be/p45uH4FvHs8
+
 Port to microservice table:
 
 | Port | Microservice |
@@ -115,7 +117,7 @@ $ npm start
 
 For more detailes, read README in `./bank_react_web`.
 
-4) For API testing you can use a Postman collection in `./docs/NYU_Java_Project.postman_collection.json`. First, you must register or use already existing credentials for login to get JWT token in the response and use it in a Authorization header for any other endpoints. Note that JWT will expire in **20 minutes**. For more details you can follow my above youtube video.
+4) For API testing you can use a Postman collection in `./docs/NYU_Java_Project.postman_collection.json`. First, you must register or use already existing credentials for login to get JWT token in the response and use it in a Authorization header for any other endpoints. Note that JWT will expire in **20 minutes**. **For more details you can follow my above youtube video.**
 
 5) Enjoy the React UI and explore Swagger docuementation:
 

@@ -1,1 +1,1 @@
-./mvnw spring-boot:run
+./gradlew bootRun
