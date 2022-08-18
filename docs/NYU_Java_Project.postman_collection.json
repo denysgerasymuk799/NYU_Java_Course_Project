@@ -1,0 +1,271 @@
+{
+	"info": {
+		"_postman_id": "bd1dac04-dfbd-4eff-b5ca-c6fff450d610",
+		"name": "NYU_Java_Project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Sign in",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"denys20220728_1\",\n    \"password\": \"secret\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8001/api/auth/signin",
+					"host": [
+						"localhost"
+					],
+					"port": "8001",
+					"path": [
+						"api",
+						"auth",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sign up",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"denys20220728_1\",\n    \"email\": \"denys20220728_1@gmail.com\",\n    \"password\": \"secret\",\n    \"firstname\": \"Denys\",\n    \"lastname\": \"Herasymuk\",\n    \"roles\": [\"user\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8001/api/auth/signup",
+					"host": [
+						"localhost"
+					],
+					"port": "8001",
+					"path": [
+						"api",
+						"auth",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Handle transaction TRANSACTION",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiIUzUxMiJ9.eyJzdWIiOiJkZW55czIwMjIwNzI4XzEiLCJpYXQiOjE2NjA2ODczMTksImV4cCI6MTY2MDcyMzMxOSwidXNlcl9kZXRhaWxzIjp7ImNhcmRJZCI6IjU1MzY5MTM5NDU2NTYyMzUiLCJlbWFpbCI6ImRlbnlzMjAyMjA3MjhfMUBnbWFpbC5jb20iLCJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9VU0VSIn1dfX0.MJO5lUFm8c334BJD15ILY6-nm__Luq4l-UiIKBf9qYH21YC1Z3SoiaxvT_-IuRdAu3jHGGeEpykPVEHgqmxs8Q",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"sender_card_id\": \"5536913945656235\",\n    \"receiver_card_id\": \"7777777777777771\",\n    \"amount\": 100,\n    \"transaction_type\": \"TRANSACTION\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8002/api/orchestrator/handle_transaction",
+					"host": [
+						"localhost"
+					],
+					"port": "8002",
+					"path": [
+						"api",
+						"orchestrator",
+						"handle_transaction"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Handle transaction TOP_UP",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZW55czIwMjIwNzI4XzEiLCJpYXQiOjE2NjA0NzI0OTUsImV4cCI6MTY2MDUwODQ5NSwidXNlcl9kZXRhaWxzIjp7ImNhcmRJZCI6IjU1MzY5MTM5NDU2NTYyMzUiLCJlbWFpbCI6ImRlbnlzMjAyMjA3MjhfMUBnbWFpbC5jb20iLCJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9VU0VSIn1dfX0.vspo4e_oVWEYIH-86LMi1aE_HJCbB_4Yt6gAdOnTT6nQOqe5uM_7m7FfuyrmyNx_9QObmaMxDSqNd36aUX0YOw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"sender_card_id\": \"5536913945656235\",\n    \"receiver_card_id\": \"5536913945656235\",\n    \"amount\": 1,\n    \"transaction_type\": \"TOP_UP\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8002/api/orchestrator/handle_transaction",
+					"host": [
+						"localhost"
+					],
+					"port": "8002",
+					"path": [
+						"api",
+						"orchestrator",
+						"handle_transaction"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get notifications",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZW55czIwMjIwNzI4XzEiLCJpYXQiOjE2NjA0NzI0OTUsImV4cCI6MTY2MDUwODQ5NSwidXNlcl9kZXRhaWxzIjp7ImNhcmRJZCI6IjU1MzY5MTM5NDU2NTYyMzUiLCJlbWFpbCI6ImRlbnlzMjAyMjA3MjhfMUBnbWFpbC5jb20iLCJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9VU0VSIn1dfX0.vspo4e_oVWEYIH-86LMi1aE_HJCbB_4Yt6gAdOnTT6nQOqe5uM_7m7FfuyrmyNx_9QObmaMxDSqNd36aUX0YOw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"last_transaction_id\": \"4933c071-dec4-4afa-9d6d-c24ccb6e50db\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8002/api/orchestrator/get_notifications",
+					"host": [
+						"localhost"
+					],
+					"port": "8002",
+					"path": [
+						"api",
+						"orchestrator",
+						"get_notifications"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get balance",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZW55czIwMjIwNzI4XzEiLCJpYXQiOjE2NjA1MTM1MTAsImV4cCI6MTY2MDU0OTUxMCwidXNlcl9kZXRhaWxzIjp7ImNhcmRJZCI6IjU1MzY5MTM5NDU2NTYyMzUiLCJlbWFpbCI6ImRlbnlzMjAyMjA3MjhfMUBnbWFpbC5jb20iLCJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9VU0VSIn1dfX0.ogagHeoenkIez4LhuVVWJaUAGb-LT_dBpbUeAczRTRkKwCkC8d6ZQEn_tFcwK9VA04ZDHpVUVX1nrG5E8BRY7Q",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"card_id\": \"55369139456562365\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8005/api/account_service/get_balance",
+					"host": [
+						"localhost"
+					],
+					"port": "8005",
+					"path": [
+						"api",
+						"account_service",
+						"get_balance"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get transactions",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZW55czIwMjIwNzI4XzEiLCJpYXQiOjE2NjA1MTM1MTAsImV4cCI6MTY2MDU0OTUxMCwidXNlcl9kZXRhaWxzIjp7ImNhcmRJZCI6IjU1MzY5MTM5NDU2NTYyMzUiLCJlbWFpbCI6ImRlbnlzMjAyMjA3MjhfMUBnbWFpbC5jb20iLCJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9VU0VSIn1dfX0.ogagHeoenkIez4LhuVVWJaUAGb-LT_dBpbUeAczRTRkKwCkC8d6ZQEn_tFcwK9VA04ZDHpVUVX1nrG5E8BRY7Q",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"card_id\": \"5536913945656235\",\n    \"start_idx\": 10\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8005/api/account_service/get_transactions",
+					"host": [
+						"localhost"
+					],
+					"port": "8005",
+					"path": [
+						"api",
+						"account_service",
+						"get_transactions"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
