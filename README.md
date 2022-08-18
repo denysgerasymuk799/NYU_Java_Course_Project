@@ -12,16 +12,19 @@ This project is a submission for NYU Java course project. It is called **unobank
 
 **Project documentation** -- https://proximal-bladder-a8d.notion.site/NYU-Java-unobank-Online-Web-Banking-aa5d609d46e84c59815e79400c2bb4ec
 
+
 ## Features
 
 - Functionality: `Deposit money`, `Send money`, `List transactions`, `Sign in/Sign Up with JWT Token`
 - Technologies: `Kafka`, `Java 8`
-- Frameworks: `Spring Boot`, `Kafka Streams for Spring`
-- Databases: `AWS Keyspaces (serverless Cassandra)`, `Cloud MongoDB`
+- Frameworks and Libraries: `Spring Boot`, `Kafka for Spring`, `Kafka Streams`, `Spring Data Cassandra`, `Spring Data Mongo`, `AWS Java SDK`
+- Databases: `AWS Keyspaces (serverless Cassandra)`, `Cloud MongoDB`, `AWS S3`
 - Java features: `Development of microservices`, `REST API development`, `Interaction with Kafka (event-driven design)`, `Interaction with two NoSQL databases`, `Logic with JWT tokens for authorization`
 
 
 ## Diagrams
+
+## How to run the project
 
 ## Useful commands
 
@@ -35,9 +38,20 @@ This project is a submission for NYU Java course project. It is called **unobank
 
 * Delete topic: `kafka-topics.sh --bootstrap-server localhost:9092 --delete --topic first_topic`
 
+
 ## Content
 
 * Why do Transaction and Cards services not have JWT validation?
+
+
+| Port | Microservice |
+| --- | --- |
+| 8001 | Auth Service |
+| 8002 | Orchestrator Service |
+| 8003 | Transaction Service |
+| 8004 | Card Service |
+| 8005 | Account Service |
+
 
 * http://localhost:8001/swagger-ui/index.html
 
